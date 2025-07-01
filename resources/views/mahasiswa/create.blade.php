@@ -24,6 +24,7 @@
                                     @endforeach
                                 </select>
                             </div>
+
                             <div class="mb-3">
                                 <label for="id_angkatan" class="form-label">Angkatan</label>
                                 <select data-plugin="customselect" class="form-select select2"
