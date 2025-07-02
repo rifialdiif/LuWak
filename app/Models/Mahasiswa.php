@@ -71,4 +71,12 @@ class Mahasiswa extends Model
     {
         return $this->hasMany(Notifikasi::class, 'id_mahasiswa', 'id_mahasiswa');
     }
+
+    /**
+     * Scope a query to only include mahasiswa who do not have a DPA.
+     */
+    public function scopeWithoutDpa($query)
+    {
+        return $query->doesntHave('dpa');
+    }
 }

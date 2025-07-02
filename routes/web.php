@@ -4,6 +4,7 @@ use App\Http\Controllers\ProdiController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AngkatanController;
+use App\Http\Controllers\DpaController;
 use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\MhsController;
 
@@ -54,4 +55,13 @@ Route::group(['prefix' => 'mhs'], function () {
     Route::get('/{id}/edit', [MhsController::class, 'edit'])->name('mhs.edit');
     Route::put('/{id}', [MhsController::class, 'update'])->name('mhs.update');
     Route::delete('/{id}', [MhsController::class, 'destroy'])->name('mhs.destroy');
+});
+
+Route::group(['prefix' => 'dpa'], function () {
+    Route::get('/', [DpaController::class, 'index'])->name('dpa.index');
+    Route::post('store', [DpaController::class, 'store'])->name('dpa.store');
+    Route::get('/{id}/edit', [DpaController::class, 'edit'])->name('dpa.edit');
+    Route::put('/{id}', [DpaController::class, 'update'])->name('dpa.update');
+    Route::delete('/{id}', [DpaController::class, 'destroy'])->name('dpa.destroy');
+    Route::get('mahasiswa-by-dosen/{dosenId}', [DpaController::class, 'getMahasiswaByDosen']);
 });

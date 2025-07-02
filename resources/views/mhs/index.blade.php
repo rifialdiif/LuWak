@@ -45,6 +45,7 @@
                                     <tr>
                                         <th>NIM</th>
                                         <th>Nama</th>
+                                        <th>Prodi</th>
                                         <th>Angkatan</th>
                                         <th>DPA</th>
                                         <th>No HP Orang Tua</th>
@@ -58,8 +59,10 @@
                                         <tr>
                                             <td>{{ $mhs->user->nip_nim ?? '-' }}</td>
                                             <td>{{ $mhs->user->nama ?? '-' }}</td>
+                                            <td>{{ $mhs->user->prodi->nama_prodi ?? '-' }}</td>
                                             <td>{{ $mhs->angkatan->tahun_angkatan ?? '-' }}</td>
-                                            <td>{{ $mhs->dpa && $mhs->dpa->user ? $mhs->dpa->user->nama : '-' }}</td>
+                                            <td>{{ $mhs->dpa && $mhs->dpa->dosenPembimbing ? $mhs->dpa->dosenPembimbing->nama : '-' }}
+                                            </td>
                                             <td>{{ $mhs->no_hp_orang_tua }}</td>
                                             <td>{{ $mhs->email_ortu }}</td>
                                             <td>{{ $mhs->status_prediksi_kelulusan ?? '-' }}</td>
@@ -84,6 +87,7 @@
                                                         <i class="uil-trash-alt"></i>
                                                     </button>
                                                 </form>
+                                            </td>
                                         </tr>
                                     @endforeach
                                 </tbody>

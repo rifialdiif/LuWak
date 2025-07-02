@@ -69,7 +69,7 @@
                 </li>
                 <li class="menu-title mt-2">Akademik</li>
                 <li>
-                    <a href="#">
+                    <a href="{{ route('dpa.index') }}">
                         <i data-feather="user-check"></i>
                         <span> DPA </span>
                     </a>
