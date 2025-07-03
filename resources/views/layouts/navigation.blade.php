@@ -37,7 +37,7 @@
 
             <ul id="side-menu">
                 <li>
-                    <a href="#">
+                    <a href="{{ route('dashboard') }}">
                         <i data-feather="activity"></i>
                         <span> Dashboards </span>
                     </a>

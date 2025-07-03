@@ -71,4 +71,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Notifikasi::class, 'id_user', 'id_user');
     }
+
+    public function getAuthPassword()
+    {
+        return $this->password_hash;
+    }
 }
