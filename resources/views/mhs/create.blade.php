@@ -11,9 +11,9 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="id_user" class="form-label">Pilih Mahasiswa</label>
+                                <label for="id_user" class="form-label">Pilih Pengguna</label>
                                 <select data-plugin="customselect" class="form-select select2"
-                                    data-placeholder="Pilih Mahasiswa" id="id_user" name="id_user" required>
+                                    data-placeholder="Pilih Pengguna" id="id_user" name="id_user" required>
                                     <option value=""></option>
                                     @foreach ($users as $user)
                                         @if ($user->role === 'mahasiswa' && !$mahasiswas->contains('id_user', $user->id_user))

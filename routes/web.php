@@ -8,6 +8,7 @@ use App\Http\Controllers\AngkatanController;
 use App\Http\Controllers\DpaController;
 use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\MhsController;
+use App\Http\Controllers\AkademikController;
 
 
 Route::middleware('auth')->group(function () {
@@ -60,6 +61,11 @@ Route::middleware('auth')->group(function () {
         Route::put('/{id}', [DpaController::class, 'update'])->name('dpa.update');
         Route::delete('/{id}', [DpaController::class, 'destroy'])->name('dpa.destroy');
         Route::get('mahasiswa-by-dosen/{dosenId}', [DpaController::class, 'getMahasiswaByDosen']);
+    });
+
+    Route::group(['prefix' => 'akademik'], function () {
+        Route::get('/', [AkademikController::class, 'index'])->name('akademik.index');
+        Route::get('/{id}', [AkademikController::class, 'show'])->name('akademik.show');
     });
 });
 

@@ -40,6 +40,8 @@ class Mahasiswa extends Model
         return $this->belongsTo(Angkatan::class, 'id_angkatan', 'id_angkatan');
     }
 
+
+
     /**
      * Get the DPA record associated with the mahasiswa.
      */

@@ -75,7 +75,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="{{ route('akademik.index') }}">
                         <i data-feather="book-open"></i>
                         <span> Akademik </span>
                     </a>

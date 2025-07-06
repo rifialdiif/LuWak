@@ -26,6 +26,10 @@ return new class extends Migration
             $table->string('status_semester_4', 20)->nullable();
             $table->integer('total_sks_lulus')->nullable();
             $table->integer('total_sks_tidak_lulus')->nullable();
+            $table->string('dokumen_transkrip')->nullable();
+            $table->string('status_validasi', 20)->nullable();
+            $table->unsignedBigInteger('validasi_by')->nullable();
+            $table->dateTime('validasi_at')->nullable();
 
             $table->foreign('id_mahasiswa')->references('id_mahasiswa')->on('mahasiswa')->onDelete('cascade');
         });
