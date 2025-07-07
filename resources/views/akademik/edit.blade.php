@@ -1,19 +1,21 @@
-<!-- Modal Input Data Akademik -->
-<div class="modal fade" id="modalInputAkademik" tabindex="-1" aria-labelledby="modalInputAkademikLabel" aria-hidden="true">
+<!-- Modal Edit Data Akademik -->
+<div class="modal fade" id="modalEditAkademik" tabindex="-1" aria-labelledby="modalEditAkademikLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content rounded-4">
             <div class="modal-header border-0 pb-0 flex-column align-items-start">
                 <div class="d-flex align-items-center mb-1">
-                    <h5 class="modal-title fw-bold mb-0" id="modalInputAkademikLabel" style="font-size:1.5rem;">Tambah
-                        Data Akademik</h5>
+                    <h5 class="modal-title fw-bold mb-0" id="modalEditAkademikLabel" style="font-size:1.5rem;">Edit Data
+                        Akademik</h5>
                 </div>
                 <button type="button" class="btn-close position-absolute end-0 top-0 m-3" data-bs-dismiss="modal"
                     aria-label="Close"></button>
             </div>
-            <form action="{{ route('akademik.store') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('akademik.update', $mahasiswa->id_mahasiswa) }}" method="POST"
+                enctype="multipart/form-data">
                 @csrf
+                @method('PUT')
                 <input type="hidden" name="id_mahasiswa" value="{{ $mahasiswa->id_mahasiswa }}">
-                @if ($errors->any())
+                @if ($errors->any() && session('edit_modal'))
                     <div class="alert alert-danger">
                         <ul class="mb-0">
                             @foreach ($errors->all() as $error)
@@ -22,7 +24,7 @@
                         </ul>
                     </div>
                 @endif
-                @if (session('error'))
+                @if (session('error') && session('edit_modal'))
                     <div class="alert alert-danger">{{ session('error') }}</div>
                 @endif
                 <div class="modal-body pt-0">
@@ -48,7 +50,7 @@
                                             <input type="text" maxlength="4"
                                                 class="form-control form-control-lg ips-input"
                                                 name="ips_semester_{{ $i }}"
-                                                value="{{ old('ips_semester_' . $i) }}"
+                                                value="{{ old('ips_semester_' . $i, $mahasiswa->riwayatAkademik->{'ips_semester_' . $i} ?? '') }}"
                                                 placeholder="Masukkan nilai IPS {{ $i }}" required>
                                         </div>
                                         <div>
@@ -56,10 +58,12 @@
                                                     class="text-danger">*</span></label>
                                             <select class="form-select form-select-lg"
                                                 name="status_semester_{{ $i }}" required>
-                                                <option selected disabled>Pilih status</option>
+                                                <option disabled
+                                                    {{ old('status_semester_' . $i, $mahasiswa->riwayatAkademik->{'status_semester_' . $i} ?? '') == '' ? 'selected' : '' }}>
+                                                    Pilih status</option>
                                                 @foreach ($statusSemesterOptions as $option)
                                                     <option value="{{ $option }}"
-                                                        {{ old('status_semester_' . $i) == $option ? 'selected' : '' }}>
+                                                        {{ old('status_semester_' . $i, $mahasiswa->riwayatAkademik->{'status_semester_' . $i} ?? '') == $option ? 'selected' : '' }}>
                                                         {{ ucfirst(str_replace('_', ' ', $option)) }}</option>
                                                 @endforeach
                                             </select>
@@ -86,7 +90,9 @@
                                     <label class="form-label fw-semibold mb-1">Jumlah SKS yang Lulus <span
                                             class="text-danger">*</span></label>
                                     <input type="number" min="0" class="form-control form-control-lg"
-                                        name="sks_lulus" value="{{ old('sks_lulus') }}" placeholder="120" required>
+                                        name="sks_lulus"
+                                        value="{{ old('sks_lulus', $mahasiswa->riwayatAkademik->total_sks_lulus ?? '') }}"
+                                        placeholder="120" required>
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -98,8 +104,9 @@
                                     <label class="form-label fw-semibold mb-1">Jumlah SKS yang Tidak Lulus <span
                                             class="text-danger">*</span></label>
                                     <input type="number" min="0" class="form-control form-control-lg"
-                                        name="sks_tidak_lulus" value="{{ old('sks_tidak_lulus') }}" placeholder="6"
-                                        required>
+                                        name="sks_tidak_lulus"
+                                        value="{{ old('sks_tidak_lulus', $mahasiswa->riwayatAkademik->total_sks_tidak_lulus ?? '') }}"
+                                        placeholder="6" required>
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -112,11 +119,18 @@
                                             class="text-danger">*</span></label>
                                     <div class="input-group mb-2">
                                         <input type="file" class="form-control" name="dokumen_transkrip"
-                                            accept=".pdf,.jpg,.jpeg,.png" required>
+                                            accept=".pdf,.jpg,.jpeg,.png">
                                         <button class="btn btn-outline-secondary" type="button">
                                             <i class="bi bi-upload"></i>
                                         </button>
                                     </div>
+                                    @if ($mahasiswa->riwayatAkademik && $mahasiswa->riwayatAkademik->dokumen_transkrip)
+                                        <div class="form-text">
+                                            File saat ini: <a
+                                                href="{{ asset('storage/transkrip/' . $mahasiswa->riwayatAkademik->dokumen_transkrip) }}"
+                                                target="_blank">{{ $mahasiswa->riwayatAkademik->dokumen_transkrip }}</a>
+                                        </div>
+                                    @endif
                                     <div class="form-text">Format: PDF, JPG, JPEG, PNG (Max: 5MB)</div>
                                 </div>
                             </div>
@@ -127,7 +141,7 @@
                     <button type="button" class="btn btn-danger rounded-3 px-4"
                         data-bs-dismiss="modal">Batal</button>
                     <button type="reset" class="btn btn-secondary rounded-3 px-4">Reset</button>
-                    <button type="submit" class="btn btn-primary rounded-3 px-4">Simpan</button>
+                    <button type="submit" class="btn btn-primary rounded-3 px-4">Simpan Perubahan</button>
                 </div>
             </form>
         </div>

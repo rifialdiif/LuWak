@@ -39,6 +39,14 @@ class RiwayatAkademik extends Model
     {
         return $this->belongsTo(Mahasiswa::class, 'id_mahasiswa', 'id_mahasiswa');
     }
+
+    /**
+     * Get the user who validated this riwayat akademik.
+     */
+    public function validator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'validasi_by', 'id_user');
+    }
 }
 // This model represents the academic history of a student, including their semester grades and statuses.
 // It is linked to the Mahasiswa model, which represents a student in the system.

@@ -75,10 +75,20 @@
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('akademik.index') }}">
-                        <i data-feather="book-open"></i>
-                        <span> Akademik </span>
-                    </a>
+                    @php
+                        $user = Auth::user();
+                    @endphp
+                    @if ($user->role === 'mahasiswa')
+                        <a href="{{ route('akademik.show', $user->mahasiswa->id_mahasiswa ?? 0) }}">
+                            <i data-feather="book-open"></i>
+                            <span> Akademik </span>
+                        </a>
+                    @else
+                        <a href="{{ route('akademik.index') }}">
+                            <i data-feather="book-open"></i>
+                            <span> Akademik </span>
+                        </a>
+                    @endif
                 </li>
                 <li class="menu-title mt-2">Prediksi</li>
                 <li>

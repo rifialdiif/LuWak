@@ -138,7 +138,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse ($mahasiswas as $mahasiswa)
+                                    @foreach ($mahasiswas as $mahasiswa)
                                         <tr>
                                             <td>{{ $mahasiswa->user->nip_nim ?? '-' }}</td>
                                             <td>{{ $mahasiswa->user->nama ?? '-' }}</td>
@@ -146,11 +146,12 @@
                                             <td>{{ $mahasiswa->angkatan->tahun_angkatan ?? '-' }}</td>
                                             <td>
                                                 @if ($mahasiswa->riwayatAkademik && $mahasiswa->riwayatAkademik->dokumen_transkrip)
-                                                    <a href="{{ asset('storage/transkrip/' . $mahasiswa->riwayatAkademik->dokumen_transkrip) }}"
-                                                        target="_blank" class="btn btn-outline-primary btn-sm"
-                                                        title="Lihat Transkrip">
-                                                        <i class="mdi mdi-file-document"></i>
-                                                    </a>
+                                                    <button type="button"
+                                                        class="btn btn-outline-primary btn-sm btn-preview-transkrip"
+                                                        data-bs-toggle="modal" data-bs-target="#modalPreviewTranskrip"
+                                                        data-id="{{ $mahasiswa->id_mahasiswa }}">
+                                                        <i class="bi bi-file-earmark-text"></i>
+                                                    </button>
                                                 @else
                                                     <span class="text-muted">-</span>
                                                 @endif
@@ -160,7 +161,7 @@
                                                     @if ($mahasiswa->riwayatAkademik->status_validasi === 'valid')
                                                         <span class="badge bg-success">Valid</span>
                                                     @elseif($mahasiswa->riwayatAkademik->status_validasi === 'pending')
-                                                        <span class="badge bg-warning">Pending</span>
+                                                        <span class="badge bg-warning">Menunggu Validasi</span>
                                                     @elseif($mahasiswa->riwayatAkademik->status_validasi === 'invalid')
                                                         <span class="badge bg-danger">Invalid</span>
                                                     @else
@@ -178,11 +179,7 @@
                                                 </a>
                                             </td>
                                         </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="7" class="text-center">Tidak ada data mahasiswa</td>
-                                        </tr>
-                                    @endforelse
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div> <!-- end preview-->
@@ -191,6 +188,7 @@
             </div> <!-- end card -->
         </div><!-- end col-->
     </div>
+    @include('akademik.preview_transkrip')
 @endsection
 
 @push('script')

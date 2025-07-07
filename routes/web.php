@@ -9,6 +9,8 @@ use App\Http\Controllers\DpaController;
 use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\MhsController;
 use App\Http\Controllers\AkademikController;
+use Illuminate\Support\Facades\Storage;
+use App\Models\RiwayatAkademik;
 
 
 Route::middleware('auth')->group(function () {
@@ -66,6 +68,10 @@ Route::middleware('auth')->group(function () {
     Route::group(['prefix' => 'akademik'], function () {
         Route::get('/', [AkademikController::class, 'index'])->name('akademik.index');
         Route::get('/{id}', [AkademikController::class, 'show'])->name('akademik.show');
+        Route::post('/store', [AkademikController::class, 'store'])->name('akademik.store');
+        Route::delete('/{id}', [AkademikController::class, 'destroy'])->name('akademik.destroy');
+        Route::put('/{id}', [AkademikController::class, 'update'])->name('akademik.update');
+        Route::post('/{id}', [AkademikController::class, 'validasiTranskrip'])->name('akademik.validasi');
     });
 });
 
