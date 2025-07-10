@@ -106,12 +106,12 @@
                                 <div class="border rounded-3 p-3 h-100">
                                     <div class="d-flex align-items-center mb-2">
                                         <i class="bi bi-file-earmark-text me-2 text-primary fs-5"></i>
-                                        <span class="fw-bold text-primary">File Transkrip</span>
+                                        <span class="fw-bold text-primary">File Pendukung</span>
                                     </div>
-                                    <label class="form-label fw-semibold mb-1">Upload Transkrip <span
-                                            class="text-danger">*</span></label>
+                                    <label class="form-label fw-semibold mb-1">Upload File Pendukung (Bukti IPS 1-4,
+                                        Status Mahasiswa 1-4, Transkrip) <span class="text-danger">*</span></label>
                                     <div class="input-group mb-2">
-                                        <input type="file" class="form-control" name="dokumen_transkrip"
+                                        <input type="file" class="form-control" name="dokumen_pendukung"
                                             accept=".pdf,.jpg,.jpeg,.png" required>
                                         <button class="btn btn-outline-secondary" type="button">
                                             <i class="bi bi-upload"></i>

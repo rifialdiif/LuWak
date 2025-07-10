@@ -132,7 +132,6 @@
                                         <th>Nama Mahasiswa</th>
                                         <th>Prodi</th>
                                         <th>Angkatan</th>
-                                        <th>File Transkrip</th>
                                         <th>Status Validasi</th>
                                         <th>Aksi</th>
                                     </tr>
@@ -144,18 +143,6 @@
                                             <td>{{ $mahasiswa->user->nama ?? '-' }}</td>
                                             <td>{{ $mahasiswa->user->prodi->nama_prodi ?? '-' }}</td>
                                             <td>{{ $mahasiswa->angkatan->tahun_angkatan ?? '-' }}</td>
-                                            <td>
-                                                @if ($mahasiswa->riwayatAkademik && $mahasiswa->riwayatAkademik->dokumen_transkrip)
-                                                    <button type="button"
-                                                        class="btn btn-outline-primary btn-sm btn-preview-transkrip"
-                                                        data-bs-toggle="modal" data-bs-target="#modalPreviewTranskrip"
-                                                        data-id="{{ $mahasiswa->id_mahasiswa }}">
-                                                        <i class="bi bi-file-earmark-text"></i>
-                                                    </button>
-                                                @else
-                                                    <span class="text-muted">-</span>
-                                                @endif
-                                            </td>
                                             <td>
                                                 @if ($mahasiswa->riwayatAkademik)
                                                     @if ($mahasiswa->riwayatAkademik->status_validasi === 'valid')

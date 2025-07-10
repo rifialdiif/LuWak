@@ -73,6 +73,15 @@ Route::middleware('auth')->group(function () {
         Route::put('/{id}', [AkademikController::class, 'update'])->name('akademik.update');
         Route::post('/{id}', [AkademikController::class, 'validasiTranskrip'])->name('akademik.validasi');
     });
+
+    Route::group(['prefix' => 'prediksi'], function () {
+        Route::get('/', [App\Http\Controllers\PrediksiController::class, 'index'])->name('prediksi.index');
+        Route::get('/{id}', [App\Http\Controllers\PrediksiController::class, 'show'])->name('prediksi.show');
+    });
+
+    Route::get('/preview/form-intervensi', function () {
+        return view('prediksi.form_intervensi');
+    });
 });
 
 // Route auth tetap di luar middleware agar bisa diakses publik
@@ -81,3 +90,5 @@ Route::group(['prefix' => 'auth'], function () {
     Route::post('login', [AuthController::class, 'authenticate'])->name('login.process');
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 });
+
+Route::get('/formintervensi', [App\Http\Controllers\PrediksiController::class, 'formIntervensi']);

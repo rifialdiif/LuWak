@@ -13,11 +13,11 @@
                     aria-label="Close"></button>
             </div>
             <div class="modal-body pt-0">
-                @if ($mahasiswa->riwayatAkademik && $mahasiswa->riwayatAkademik->dokumen_transkrip)
+                @if ($mahasiswa->riwayatAkademik && $mahasiswa->riwayatAkademik->dokumen_pendukung)
                     @php
-                        $file = $mahasiswa->riwayatAkademik->dokumen_transkrip;
+                        $file = $mahasiswa->riwayatAkademik->dokumen_pendukung;
                         $fileExt = pathinfo($file, PATHINFO_EXTENSION);
-                        $fileUrl = asset('storage/transkrip/' . $file);
+                        $fileUrl = asset('storage/file_pendukung/' . $file);
                         $statusValidasi = $mahasiswa->riwayatAkademik->status_validasi;
                         $isMahasiswa = Auth::user()->role === 'mahasiswa';
                         $validasiBy = $mahasiswa->riwayatAkademik->validasi_by;
@@ -50,17 +50,20 @@
                             <div class="mb-0">Waktu: <span
                                     class="text-primary">{{ $validasiAt ? \Carbon\Carbon::parse($validasiAt)->format('d-m-Y H:i') : '-' }}</span>
                             </div>
+                            @if ($mahasiswa->riwayatAkademik->catatan_validasi)
+                                <div class="border-top my-2"></div>
+                                <div><b>Catatan Penolakan:</b><br>{{ $mahasiswa->riwayatAkademik->catatan_validasi }}
+                                </div>
+                            @endif
                         </div>
                     @endif
                     @if (!$isMahasiswa)
                         @if ($statusValidasi !== 'valid')
                             <div class="d-flex justify-content-end gap-2 mt-3">
-                                <form action="{{ route('akademik.validasi', $mahasiswa->id_mahasiswa) }}" method="POST"
-                                    class="d-inline">
-                                    @csrf
-                                    <input type="hidden" name="aksi" value="tidak_valid">
-                                    <button type="submit" class="btn btn-danger px-4">Tidak Valid</button>
-                                </form>
+                                <!-- Tombol Validasi Tidak Valid: buka modal -->
+                                <button type="button" class="btn btn-danger px-4" data-bs-toggle="modal"
+                                    data-bs-target="#modalCatatanTidakValid">Tidak Valid</button>
+                                <!-- Tombol Validasi Valid -->
                                 <form action="{{ route('akademik.validasi', $mahasiswa->id_mahasiswa) }}" method="POST"
                                     class="d-inline">
                                     @csrf
@@ -68,10 +71,11 @@
                                     <button type="submit" class="btn btn-success px-4">Valid</button>
                                 </form>
                             </div>
+                            @include('akademik.modal_catatan_tidak_valid')
                         @endif
                     @endif
                 @else
-                    <div class="text-center text-muted py-5">File transkrip tidak tersedia.</div>
+                    <div class="text-center text-muted py-5">File pendukung tidak tersedia.</div>
                 @endif
             </div>
         </div>

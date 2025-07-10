@@ -92,7 +92,7 @@
                 </li>
                 <li class="menu-title mt-2">Prediksi</li>
                 <li>
-                    <a href="#">
+                    <a href="{{ route('prediksi.index') }}">
                         <i data-feather="trending-up"></i>
                         <span> Prediksi </span>
                     </a>

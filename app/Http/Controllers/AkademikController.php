@@ -108,9 +108,9 @@ class AkademikController extends Controller
             'status_semester_4.required' => 'Status semester 4 wajib dipilih.',
             'sks_lulus.required' => 'Total SKS lulus wajib diisi.',
             'sks_tidak_lulus.required' => 'Total SKS tidak lulus wajib diisi.',
-            'dokumen_transkrip.required' => 'File transkrip wajib diupload.',
-            'dokumen_transkrip.mimes' => 'File transkrip harus berupa PDF, JPG, JPEG, atau PNG.',
-            'dokumen_transkrip.max' => 'Ukuran file transkrip maksimal 5MB.',
+            'dokumen_pendukung.required' => 'File transkrip wajib diupload.',
+            'dokumen_pendukung.mimes' => 'File transkrip harus berupa PDF, JPG, JPEG, atau PNG.',
+            'dokumen_pendukung.max' => 'Ukuran file transkrip maksimal 5MB.',
         ];
 
         $request->validate([
@@ -125,29 +125,34 @@ class AkademikController extends Controller
             'status_semester_4' => 'required|string',
             'sks_lulus' => 'required|integer|min:0',
             'sks_tidak_lulus' => 'required|integer|min:0',
-            'dokumen_transkrip' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'dokumen_pendukung' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
         ], $messages);
 
         try {
             $fileName = null;
             $riwayat = RiwayatAkademik::where('id_mahasiswa', $request->id_mahasiswa)->first();
-            if ($request->hasFile('dokumen_transkrip')) {
+            if ($request->hasFile('dokumen_pendukung')) {
                 // Hapus file lama jika ada dan update
-                if ($riwayat && $riwayat->dokumen_transkrip && Storage::disk('public')->exists('transkrip/' . $riwayat->dokumen_transkrip)) {
-                    Storage::disk('public')->delete('transkrip/' . $riwayat->dokumen_transkrip);
+                if ($riwayat && $riwayat->dokumen_pendukung && Storage::disk('public')->exists('file_pendukung/' . $riwayat->dokumen_pendukung)) {
+                    Storage::disk('public')->delete('file_pendukung/' . $riwayat->dokumen_pendukung);
                 }
-                $path = $request->file('dokumen_transkrip')->store('transkrip', 'public');
+                $path = $request->file('dokumen_pendukung')->store('file_pendukung', 'public');
                 $fileName = basename($path);
             } else if ($riwayat) {
-                $fileName = $riwayat->dokumen_transkrip;
+                $fileName = $riwayat->dokumen_pendukung;
             }
 
             // Tentukan status_validasi sesuai role
             $statusValidasi = Auth::user()->role === 'mahasiswa' ? 'pending' : 'valid';
+            $additionalValidasi = [];
+            if (Auth::user()->role !== 'mahasiswa') {
+                $additionalValidasi['validasi_by'] = Auth::user()->id_user;
+                $additionalValidasi['validasi_at'] = now();
+            }
 
             RiwayatAkademik::updateOrCreate(
                 ['id_mahasiswa' => $request->id_mahasiswa],
-                [
+                array_merge([
                     'ips_semester_1' => $request->ips_semester_1,
                     'ips_semester_2' => $request->ips_semester_2,
                     'ips_semester_3' => $request->ips_semester_3,
@@ -158,9 +163,9 @@ class AkademikController extends Controller
                     'status_semester_4' => $request->status_semester_4,
                     'total_sks_lulus' => $request->sks_lulus,
                     'total_sks_tidak_lulus' => $request->sks_tidak_lulus,
-                    'dokumen_transkrip' => $fileName,
+                    'dokumen_pendukung' => $fileName,
                     'status_validasi' => $statusValidasi,
-                ]
+                ], $additionalValidasi)
             );
 
             return redirect()->route('akademik.show', $request->id_mahasiswa)->with('success', 'Data riwayat akademik berhasil disimpan!');
@@ -189,8 +194,8 @@ class AkademikController extends Controller
             'status_semester_4.required' => 'Status semester 4 wajib dipilih.',
             'sks_lulus.required' => 'Total SKS lulus wajib diisi.',
             'sks_tidak_lulus.required' => 'Total SKS tidak lulus wajib diisi.',
-            'dokumen_transkrip.mimes' => 'File transkrip harus berupa PDF, JPG, JPEG, atau PNG.',
-            'dokumen_transkrip.max' => 'Ukuran file transkrip maksimal 5MB.',
+            'dokumen_pendukung.mimes' => 'File transkrip harus berupa PDF, JPG, JPEG, atau PNG.',
+            'dokumen_pendukung.max' => 'Ukuran file transkrip maksimal 5MB.',
         ];
 
         $request->validate([
@@ -205,25 +210,25 @@ class AkademikController extends Controller
             'status_semester_4' => 'required|string',
             'sks_lulus' => 'required|integer|min:0',
             'sks_tidak_lulus' => 'required|integer|min:0',
-            'dokumen_transkrip' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'dokumen_pendukung' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
         ], $messages);
 
         try {
             $fileName = null;
             $riwayat = RiwayatAkademik::where('id_mahasiswa', $request->id_mahasiswa)->first();
             $updateStatusValidasi = false;
-            if ($request->hasFile('dokumen_transkrip')) {
+            if ($request->hasFile('dokumen_pendukung')) {
                 // Hapus file lama jika ada dan update
-                if ($riwayat && $riwayat->dokumen_transkrip && Storage::disk('public')->exists('transkrip/' . $riwayat->dokumen_transkrip)) {
-                    Storage::disk('public')->delete('transkrip/' . $riwayat->dokumen_transkrip);
+                if ($riwayat && $riwayat->dokumen_pendukung && Storage::disk('public')->exists('file_pendukung/' . $riwayat->dokumen_pendukung)) {
+                    Storage::disk('public')->delete('file_pendukung/' . $riwayat->dokumen_pendukung);
                 }
-                $path = $request->file('dokumen_transkrip')->store('transkrip', 'public');
+                $path = $request->file('dokumen_pendukung')->store('file_pendukung', 'public');
                 $fileName = basename($path);
                 // Upload file baru, status_validasi tergantung role
                 $statusValidasi = Auth::user()->role === 'mahasiswa' ? 'pending' : 'valid';
                 $updateStatusValidasi = true;
             } else if ($riwayat) {
-                $fileName = $riwayat->dokumen_transkrip;
+                $fileName = $riwayat->dokumen_pendukung;
             }
 
             $data = [
@@ -237,10 +242,14 @@ class AkademikController extends Controller
                 'status_semester_4' => $request->status_semester_4,
                 'total_sks_lulus' => $request->sks_lulus,
                 'total_sks_tidak_lulus' => $request->sks_tidak_lulus,
-                'dokumen_transkrip' => $fileName,
+                'dokumen_pendukung' => $fileName,
             ];
             if ($updateStatusValidasi) {
                 $data['status_validasi'] = $statusValidasi;
+            }
+            if (Auth::user()->role !== 'mahasiswa') {
+                $data['validasi_by'] = Auth::user()->id_user;
+                $data['validasi_at'] = now();
             }
 
             RiwayatAkademik::updateOrCreate(
@@ -264,8 +273,8 @@ class AkademikController extends Controller
                 return back()->with('error', 'Data riwayat akademik tidak ditemukan.');
             }
             // Hapus file transkrip jika ada
-            if ($riwayat->dokumen_transkrip && Storage::disk('public')->exists('transkrip/' . $riwayat->dokumen_transkrip)) {
-                Storage::disk('public')->delete('transkrip/' . $riwayat->dokumen_transkrip);
+            if ($riwayat->dokumen_pendukung && Storage::disk('public')->exists('file_pendukung/' . $riwayat->dokumen_pendukung)) {
+                Storage::disk('public')->delete('file_pendukung/' . $riwayat->dokumen_pendukung);
             }
             $riwayat->delete();
             return back()->with('success', 'Data riwayat akademik berhasil dihapus.');
@@ -283,6 +292,7 @@ class AkademikController extends Controller
         }
         $request->validate([
             'aksi' => 'required|in:valid,tidak_valid',
+            'catatan_validasi' => 'required_if:aksi,tidak_valid',
         ]);
         try {
             $riwayat = RiwayatAkademik::where('id_mahasiswa', $id_mahasiswa)->first();
@@ -292,6 +302,11 @@ class AkademikController extends Controller
             $riwayat->status_validasi = $request->aksi === 'valid' ? 'valid' : 'tidak valid';
             $riwayat->validasi_by = $user->id_user;
             $riwayat->validasi_at = now();
+            if ($request->aksi === 'tidak_valid') {
+                $riwayat->catatan_validasi = $request->catatan_validasi;
+            } else {
+                $riwayat->catatan_validasi = null;
+            }
             $riwayat->save();
             return redirect()->route('akademik.show', $id_mahasiswa)->with('success', 'Status validasi berhasil diperbarui.');
         } catch (\Exception $e) {

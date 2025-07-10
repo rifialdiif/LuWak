@@ -113,22 +113,23 @@
                                 <div class="border rounded-3 p-3 h-100">
                                     <div class="d-flex align-items-center mb-2">
                                         <i class="bi bi-file-earmark-text me-2 text-primary fs-5"></i>
-                                        <span class="fw-bold text-primary">File Transkrip</span>
+                                        <span class="fw-bold text-primary">File Pendukung</span>
                                     </div>
-                                    <label class="form-label fw-semibold mb-1">Upload Transkrip <span
+                                    <label class="form-label fw-semibold mb-1">Upload File Pendukung (Bukti IPS 1-4,
+                                        Status Mahasiswa Semester 1-4, Transkrip) <span
                                             class="text-danger">*</span></label>
                                     <div class="input-group mb-2">
-                                        <input type="file" class="form-control" name="dokumen_transkrip"
+                                        <input type="file" class="form-control" name="dokumen_pendukung"
                                             accept=".pdf,.jpg,.jpeg,.png">
                                         <button class="btn btn-outline-secondary" type="button">
                                             <i class="bi bi-upload"></i>
                                         </button>
                                     </div>
-                                    @if ($mahasiswa->riwayatAkademik && $mahasiswa->riwayatAkademik->dokumen_transkrip)
+                                    @if ($mahasiswa->riwayatAkademik && $mahasiswa->riwayatAkademik->dokumen_pendukung)
                                         <div class="form-text">
                                             File saat ini: <a
-                                                href="{{ asset('storage/transkrip/' . $mahasiswa->riwayatAkademik->dokumen_transkrip) }}"
-                                                target="_blank">{{ $mahasiswa->riwayatAkademik->dokumen_transkrip }}</a>
+                                                href="{{ asset('storage/file_pendukung/' . $mahasiswa->riwayatAkademik->dokumen_pendukung) }}"
+                                                target="_blank">{{ $mahasiswa->riwayatAkademik->dokumen_pendukung }}</a>
                                         </div>
                                     @endif
                                     <div class="form-text">Format: PDF, JPG, JPEG, PNG (Max: 5MB)</div>

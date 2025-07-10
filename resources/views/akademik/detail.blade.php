@@ -36,7 +36,10 @@
             $mahasiswa->riwayatAkademik &&
             $mahasiswa->riwayatAkademik->status_validasi === 'tidak valid')
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            File transkrip Anda <b>tidak valid</b>. Silakan upload ulang file yang benar sesuai ketentuan.
+            File pendukung Anda <b>tidak valid</b>. Silakan upload ulang file yang benar sesuai ketentuan.<br>
+            @if ($mahasiswa->riwayatAkademik->catatan_validasi)
+                <b>Catatan Penolakan:</b> {{ $mahasiswa->riwayatAkademik->catatan_validasi }}
+            @endif
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
@@ -144,8 +147,8 @@
                                         </div>
                                         <div class="d-flex align-items-center gap-2 value-row">
                                             <span class="text-muted">
-                                                @if ($mahasiswa->riwayatAkademik && $mahasiswa->riwayatAkademik->dokumen_transkrip)
-                                                    Transkrip_{{ $mahasiswa->user->nip_nim ?? 'unknown' }}
+                                                @if ($mahasiswa->riwayatAkademik && $mahasiswa->riwayatAkademik->dokumen_pendukung)
+                                                    DokumenPendukung_{{ $mahasiswa->user->nip_nim ?? 'unknown' }}
                                                 @else
                                                     -
                                                 @endif
@@ -157,7 +160,7 @@
                                     </div>
                                 </div>
                                 <div class="col-auto">
-                                    @if ($mahasiswa->riwayatAkademik && $mahasiswa->riwayatAkademik->dokumen_transkrip)
+                                    @if ($mahasiswa->riwayatAkademik && $mahasiswa->riwayatAkademik->dokumen_pendukung)
                                         <button type="button" class="btn btn-outline-dark rounded-3 px-4"
                                             data-bs-toggle="modal" data-bs-target="#modalPreviewTranskrip">
                                             <i class="bi bi-file-earmark-text me-1"></i> Lihat File
@@ -341,7 +344,8 @@
                     // File info
                     let fileInfo = '';
                     if (btn.dataset.file) {
-                        fileInfo = 'File saat ini: <a href=\"{{ asset('storage/transkrip') }}/' +
+                        fileInfo =
+                            'File saat ini: <a href=\"{{ asset('storage/file_pendukung') }}/' +
                             btn.dataset.file + '\" target=\"_blank\">' + btn.dataset.file + '</a>';
                     }
                     document.getElementById('edit_file_info').innerHTML = fileInfo;
