@@ -6,7 +6,7 @@
             <div class="modal-header border-0 pb-0 flex-column align-items-start">
                 <div class="d-flex align-items-center mb-1">
                     <h5 class="modal-title fw-bold mb-0" id="modalPreviewTranskripLabel" style="font-size:1.3rem;">
-                        Preview File Transkrip
+                        Preview File Pendukung
                     </h5>
                 </div>
                 <button type="button" class="btn-close position-absolute end-0 top-0 m-3" data-bs-dismiss="modal"

@@ -77,6 +77,8 @@ Route::middleware('auth')->group(function () {
     Route::group(['prefix' => 'prediksi'], function () {
         Route::get('/', [App\Http\Controllers\PrediksiController::class, 'index'])->name('prediksi.index');
         Route::get('/{id}', [App\Http\Controllers\PrediksiController::class, 'show'])->name('prediksi.show');
+        Route::post('/{id}/predict', [\App\Http\Controllers\PrediksiController::class, 'predict'])->name('prediksi.predict');
+        Route::get('/{id}/riwayat-ajax', [\App\Http\Controllers\PrediksiController::class, 'riwayatAjax'])->name('prediksi.riwayatAjax');
     });
 
     Route::get('/preview/form-intervensi', function () {

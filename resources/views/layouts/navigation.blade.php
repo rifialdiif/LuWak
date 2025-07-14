@@ -92,10 +92,20 @@
                 </li>
                 <li class="menu-title mt-2">Prediksi</li>
                 <li>
-                    <a href="{{ route('prediksi.index') }}">
-                        <i data-feather="trending-up"></i>
-                        <span> Prediksi </span>
-                    </a>
+                    @php
+                        $user = Auth::user();
+                    @endphp
+                    @if ($user && $user->role === 'mahasiswa')
+                        <a href="{{ route('prediksi.show', $user->mahasiswa->id_mahasiswa ?? '') }}">
+                            <i data-feather="trending-up"></i>
+                            <span> Prediksi </span>
+                        </a>
+                    @else
+                        <a href="{{ route('prediksi.index') }}">
+                            <i data-feather="trending-up"></i>
+                            <span> Prediksi </span>
+                        </a>
+                    @endif
                 </li>
             </ul>
 

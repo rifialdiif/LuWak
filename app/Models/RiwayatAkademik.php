@@ -24,7 +24,7 @@ class RiwayatAkademik extends Model
         'status_semester_2',
         'status_semester_3',
         'status_semester_4',
-        'total_sks_lulus',
+        'total_sks_ditempuh',
         'total_sks_tidak_lulus',
         'dokumen_pendukung',
         'status_validasi',

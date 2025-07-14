@@ -161,7 +161,7 @@ class AkademikController extends Controller
                     'status_semester_2' => $request->status_semester_2,
                     'status_semester_3' => $request->status_semester_3,
                     'status_semester_4' => $request->status_semester_4,
-                    'total_sks_lulus' => $request->sks_lulus,
+                    'total_sks_ditempuh' => $request->sks_lulus,
                     'total_sks_tidak_lulus' => $request->sks_tidak_lulus,
                     'dokumen_pendukung' => $fileName,
                     'status_validasi' => $statusValidasi,
@@ -240,7 +240,7 @@ class AkademikController extends Controller
                 'status_semester_2' => $request->status_semester_2,
                 'status_semester_3' => $request->status_semester_3,
                 'status_semester_4' => $request->status_semester_4,
-                'total_sks_lulus' => $request->sks_lulus,
+                'total_sks_ditempuh' => $request->sks_lulus,
                 'total_sks_tidak_lulus' => $request->sks_tidak_lulus,
                 'dokumen_pendukung' => $fileName,
             ];

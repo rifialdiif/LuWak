@@ -227,7 +227,7 @@
                                     <div>
                                         <div class="text-muted" style="font-size:1rem;">Total SKS</div>
                                         <div class="fw-bold text-success" style="font-size:2rem;">
-                                            {{ $mahasiswa->riwayatAkademik->total_sks_lulus }}</div>
+                                            {{ $mahasiswa->riwayatAkademik->total_sks_ditempuh }}</div>
                                     </div>
                                 </div>
                             </div>
