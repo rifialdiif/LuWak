@@ -56,18 +56,31 @@
                             <span class="fw-bold fs-4">Identitas Mahasiswa</span>
                         </div>
                         <div>
-                            <div class="bg-light bg-opacity-10 border border-success rounded-3 px-2 py-1 d-flex align-items-center"
-                                style="min-width:140px;">
-                                <div class="d-flex flex-column align-items-center justify-content-center me-2"
-                                    style="min-width:24px;">
-                                    <i class="bi bi-bullseye text-success" style="font-size:1.2rem;"></i>
+                            @if ($prediksiTerakhir)
+                                @php
+                                    $isRisiko = $prediksiTerakhir->hasil_prediksi == 1;
+                                @endphp
+                                <div class="bg-light bg-opacity-10 border {{ $isRisiko ? 'border-danger' : 'border-success' }} rounded-3 px-2 py-1 d-flex align-items-center"
+                                    style="min-width:140px;">
+                                    <div class="d-flex flex-column align-items-center justify-content-center me-2"
+                                        style="min-width:24px;">
+                                        <i class="bi bi-bullseye {{ $isRisiko ? 'text-danger' : 'text-success' }}"
+                                            style="font-size:1.2rem;"></i>
+                                    </div>
+
+                                    <div class="d-flex flex-column justify-content-center" style="line-height:1;">
+                                        <span class="fw-semibold {{ $isRisiko ? 'text-danger' : 'text-success' }}"
+                                            style="font-size:0.85rem;">
+                                            {{ $isRisiko ? 'Berisiko Tidak Lulus Tepat Waktu' : 'Lulus Tepat Waktu' }}
+                                        </span>
+                                        <span class="{{ $isRisiko ? 'text-danger' : 'text-success' }}"
+                                            style="font-size:0.75rem; opacity:0.7;">
+                                            Confidence: {{ round($prediksiTerakhir->confidence_score * 100, 1) }}% | Est:
+                                            {{ \Carbon\Carbon::parse($prediksiTerakhir->tanggal_prediksi)->format('d/m/Y, H.i.s') }}
+                                        </span>
+                                    </div>
                                 </div>
-                                <div class="d-flex flex-column justify-content-center" style="line-height:1;">
-                                    <span class="fw-semibold text-success" style="font-size:0.85rem;">Tepat Waktu</span>
-                                    <span class="text-success" style="font-size:0.75rem; opacity:0.7;">Akurasi: 85.7% | Est:
-                                        2025-08</span>
-                                </div>
-                            </div>
+                            @endif
                         </div>
                     </div>
                     <div class="row g-0">
@@ -281,6 +294,12 @@
                                     @endfor
                                 </tbody>
                             </table>
+                        </div>
+                        <div class="d-flex justify-content-end mt-1">
+                            <a href="{{ route('prediksi.show', $mahasiswa->id_mahasiswa) }}"
+                                class="btn btn-primary fw-bold">
+                                <i class="bi bi-arrow-right-circle me-1"></i> Lihat Deteksi Kelulusan
+                            </a>
                         </div>
                     @else
                         {{-- Empty state --}}

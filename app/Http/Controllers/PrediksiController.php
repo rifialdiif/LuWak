@@ -200,4 +200,20 @@ class PrediksiController extends Controller
         ])->render();
         return response()->json(['riwayat_html' => $riwayatHtml]);
     }
+
+    // Endpoint untuk AJAX refresh riwayat intervensi (notifikasi)
+    public function riwayatIntervensiAjax($id)
+    {
+        $mahasiswa = Mahasiswa::with('user.prodi')->findOrFail($id);
+        $riwayatNotifikasi = \App\Models\Notifikasi::with('user')
+            ->where('id_mahasiswa', $id)
+            ->orderByDesc('waktu_kirim')
+            ->take(10)
+            ->get();
+        $riwayatHtml = View::make('prediksi.riwayatintervensi', [
+            'riwayatNotifikasi' => $riwayatNotifikasi,
+            'mahasiswa' => $mahasiswa
+        ])->render();
+        return response()->json(['riwayat_html' => $riwayatHtml]);
+    }
 }

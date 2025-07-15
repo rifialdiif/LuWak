@@ -18,13 +18,41 @@
                 </div>
                 <div class="small ps-2"><b>Dilakukan oleh:</b> {{ $prediksi->user->nama ?? '-' }}</div>
                 <span
-                    class="badge {{ $prediksi->hasil_prediksi == 1 ? 'bg-danger' : 'bg-dark' }} ms-auto rounded-pill px-2 py-1 position-absolute"
-                    style="font-size:0.85rem; top:10px; right:10px;">
+                    class="badge {{ $prediksi->hasil_prediksi == 1 ? 'bg-danger' : 'bg-dark' }} ms-auto rounded-pill px-2 py-1 custom-badge-prediksi">
                     {{ $prediksi->hasil_prediksi == 1 ? 'Berisiko Lulus Tidak Tepat Waktu' : 'Lulus Tepat Waktu' }}
                 </span>
+
             </div>
         @empty
             <div class="text-muted text-center">Belum ada riwayat prediksi.</div>
         @endforelse
     </div>
 </div>
+
+@push('styles')
+    <style>
+        .custom-badge-prediksi {
+            font-size: 0.95rem;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            max-width: 70vw;
+            white-space: normal;
+            text-align: right;
+            z-index: 2;
+        }
+
+        @media (max-width: 576px) {
+            .custom-badge-prediksi {
+                position: static;
+                display: block;
+                margin: 10px 0 0 auto;
+                font-size: 0.75rem;
+                text-align: right;
+                max-width: 100%;
+                padding-left: 0.75rem;
+                padding-right: 0.75rem;
+            }
+        }
+    </style>
+@endpush

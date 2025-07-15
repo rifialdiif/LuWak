@@ -86,7 +86,12 @@ class AkademikController extends Controller
             return trim($value, "'");
         }, explode(',', $enumStr));
 
-        return view('akademik.detail', compact('mahasiswa', 'statusSemesterOptions'));
+        // Ambil prediksi terakhir mahasiswa
+        $prediksiTerakhir = \App\Models\Prediksi::where('id_mahasiswa', $mahasiswa->id_mahasiswa)
+            ->orderByDesc('tanggal_prediksi')
+            ->first();
+
+        return view('akademik.detail', compact('mahasiswa', 'statusSemesterOptions', 'prediksiTerakhir'));
     }
 
     public function store(Request $request)

@@ -11,6 +11,7 @@ use App\Http\Controllers\MhsController;
 use App\Http\Controllers\AkademikController;
 use Illuminate\Support\Facades\Storage;
 use App\Models\RiwayatAkademik;
+use App\Http\Controllers\NotifikasiController;
 
 
 Route::middleware('auth')->group(function () {
@@ -79,10 +80,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/{id}', [App\Http\Controllers\PrediksiController::class, 'show'])->name('prediksi.show');
         Route::post('/{id}/predict', [\App\Http\Controllers\PrediksiController::class, 'predict'])->name('prediksi.predict');
         Route::get('/{id}/riwayat-ajax', [\App\Http\Controllers\PrediksiController::class, 'riwayatAjax'])->name('prediksi.riwayatAjax');
+        Route::get('/{id}/riwayat-intervensi-ajax', [\App\Http\Controllers\PrediksiController::class, 'riwayatIntervensiAjax'])->name('prediksi.riwayatIntervensiAjax');
+        Route::get('/preview/form-intervensi', [App\Http\Controllers\PrediksiController::class, 'formIntervensi'])->name('prediksi.formIntervensi');
     });
 
-    Route::get('/preview/form-intervensi', function () {
-        return view('prediksi.form_intervensi');
+    Route::prefix('notifikasi')->group(function () {
+        Route::post('/intervensi', [NotifikasiController::class, 'kirimIntervensi'])->name('notifikasi.kirimIntervensi');
     });
 });
 

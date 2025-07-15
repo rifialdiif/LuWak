@@ -14,6 +14,18 @@
                         @endif
                     </div>
                 </div>
+                @if (session('success'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+                @if (session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ session('error') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
             </div>
         </div>
         <div class="mb-2">
@@ -376,16 +388,16 @@
 
                     // Prefill form
                     document.getElementById('penerima').value = 'Orang Tua/Wali ' + namaMahasiswa;
-                    // Default: tampilkan nomor HP ortu
-                    document.getElementById('nomor_hp').value = hpOrtu;
-                    document.getElementById('metodeSms').checked = true;
+                    // Default: tampilkan email ortu
+                    document.getElementById('nomor_email').value = emailOrtu;
+                    document.getElementById('metodeEmail').checked = true;
 
                     // Toggle input sesuai metode
                     document.getElementById('metodeEmail').addEventListener('change', function() {
-                        document.getElementById('nomor_hp').value = emailOrtu;
+                        document.getElementById('nomor_email').value = emailOrtu;
                     });
                     document.getElementById('metodeSms').addEventListener('change', function() {
-                        document.getElementById('nomor_hp').value = hpOrtu;
+                        document.getElementById('nomor_email').value = hpOrtu;
                     });
 
                     // Tampilkan modal (Bootstrap 5)

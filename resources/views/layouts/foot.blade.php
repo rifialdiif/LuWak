@@ -29,3 +29,4 @@
 <script src="{{ asset('assets/js/app.min.js') }}"></script>
 
 @stack('script')
+@stack('styles')
