@@ -63,8 +63,8 @@ class NotifikasiController extends Controller
                     $nomor = '62' . substr($nomor, 1);
                 }
                 $pesan = $request->pesan;
-                // Redirect ke prediksi.show dengan nomor dan pesan WhatsApp di session
-                return redirect()->route('prediksi.show', $mahasiswa->id_mahasiswa)
+                // Redirect ke prediksi.show dengan pesan sukses dan tab intervensi
+                return redirect()->route('prediksi.show', [$mahasiswa->id_mahasiswa, 'tab' => 'intervensi'])
                     ->with([
                         'success' => 'Notifikasi intervensi berhasil dikirim.',
                         'wa_nomor' => $nomor,
@@ -89,10 +89,10 @@ class NotifikasiController extends Controller
         }
 
         if ($statusKirim) {
-            return redirect()->route('prediksi.show', $mahasiswa->id_mahasiswa)
+            return redirect()->route('prediksi.show', [$mahasiswa->id_mahasiswa, 'tab' => 'intervensi'])
                 ->with('success', 'Notifikasi intervensi berhasil dikirim.');
         } else {
-            return redirect()->route('prediksi.show', $mahasiswa->id_mahasiswa)
+            return redirect()->route('prediksi.show', [$mahasiswa->id_mahasiswa, 'tab' => 'intervensi'])
                 ->with('error', 'Notifikasi gagal dikirim. ' . ($errorMsg ?? ''));
         }
     }

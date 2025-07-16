@@ -19,6 +19,7 @@
 <script src="{{ asset('assets/libs/flatpickr/flatpickr.min.js') }}"></script>
 <script src="{{ asset('assets/libs/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <!-- third party js ends -->
 
 <!-- init js -->

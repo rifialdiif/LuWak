@@ -57,7 +57,7 @@
                             Pesan harus diisi jika tidak memilih template pesan.
                         </div>
                     </div>
-                    <input type="hidden" name="id_mahasiswa" value="{{ $mahasiswa->id_mahasiswa }}">
+                    <input type="hidden" name="id_mahasiswa" value="{{ $mahasiswa ? $mahasiswa->id_mahasiswa : '' }}">
                     <button type="submit"
                         class="btn btn-primary w-100 py-2 rounded-3 fw-bold fs-6 d-flex align-items-center justify-content-center"
                         style="gap:0.5rem;">

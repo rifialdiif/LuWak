@@ -16,9 +16,7 @@ use App\Http\Controllers\NotifikasiController;
 
 Route::middleware('auth')->group(function () {
     Route::group(['prefix' => 'dashboard'], function () {
-        Route::get('/', function () {
-            return view('dashboard.dash');
-        })->name('dashboard');
+        Route::get('/', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
     });
 
     // DATA MASTER

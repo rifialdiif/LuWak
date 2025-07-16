@@ -91,7 +91,7 @@
                                     <div class="col-auto">
                                         <label class="form-label mb-0">Dokumen Pendukung</label>
                                         <div class="d-flex align-items-center gap-2">
-                                            @if ($mahasiswa->riwayatAkademik->dokumen_pendukung)
+                                            @if (isset($mahasiswa->riwayatAkademik) && $mahasiswa->riwayatAkademik->dokumen_pendukung)
                                                 <a href="{{ $mahasiswa->riwayatAkademik->dokumen_pendukung }}"
                                                     data-bs-toggle="modal" data-bs-target="#modalPreviewTranskrip"
                                                     class="text-primary text-decoration-underline">Lihat
@@ -259,6 +259,15 @@
 @push('script')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Auto-activate tab from query string
+            const urlParams = new URLSearchParams(window.location.search);
+            const tab = urlParams.get('tab');
+            if (tab) {
+                const tabBtn = document.querySelector(`a[href="#${tab}"]`);
+                if (tabBtn) {
+                    new bootstrap.Tab(tabBtn).show();
+                }
+            }
             const form = document.getElementById('formPrediksi');
             if (!form) return;
             form.addEventListener('submit', function(e) {
