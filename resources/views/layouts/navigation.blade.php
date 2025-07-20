@@ -42,42 +42,44 @@
                         <span> Dashboards </span>
                     </a>
                 </li>
-                <li class="menu-title mt-2">Master</li>
+                @php
+                    $user = Auth::user();
+                @endphp
+                @if ($user && $user->role === 'admin')
+                    <li class="menu-title mt-2">Master</li>
+                    <li>
+                        <a href="{{ route('user.index') }}">
+                            <i data-feather="user"></i>
+                            <span> User </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('prodi.index') }}">
+                            <i data-feather="layers"></i>
+                            <span> Prodi </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('angkatan.index') }}">
+                            <i data-feather="calendar"></i>
+                            <span> Angkatan </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('mhs.index') }}">
+                            <i data-feather="users"></i>
+                            <span> Mahasiswa </span>
+                        </a>
+                    </li>
+                    <li class="menu-title mt-2">Akademik</li>
+                    <li>
+                        <a href="{{ route('dpa.index') }}">
+                            <i data-feather="user-check"></i>
+                            <span> DPA </span>
+                        </a>
+                    </li>
+                @endif
                 <li>
-                    <a href="{{ route('user.index') }}">
-                        <i data-feather="user"></i>
-                        <span> User </span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('prodi.index') }}">
-                        <i data-feather="layers"></i>
-                        <span> Prodi </span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('angkatan.index') }}">
-                        <i data-feather="calendar"></i>
-                        <span> Angkatan </span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('mhs.index') }}">
-                        <i data-feather="users"></i>
-                        <span> Mahasiswa </span>
-                    </a>
-                </li>
-                <li class="menu-title mt-2">Akademik</li>
-                <li>
-                    <a href="{{ route('dpa.index') }}">
-                        <i data-feather="user-check"></i>
-                        <span> DPA </span>
-                    </a>
-                </li>
-                <li>
-                    @php
-                        $user = Auth::user();
-                    @endphp
                     @if ($user->role === 'mahasiswa')
                         <a href="{{ route('akademik.show', $user->mahasiswa->id_mahasiswa ?? 0) }}">
                             <i data-feather="book-open"></i>
@@ -92,9 +94,6 @@
                 </li>
                 <li class="menu-title mt-2">Prediksi</li>
                 <li>
-                    @php
-                        $user = Auth::user();
-                    @endphp
                     @if ($user && $user->role === 'mahasiswa')
                         <a href="{{ route('prediksi.show', $user->mahasiswa->id_mahasiswa ?? '') }}">
                             <i data-feather="trending-up"></i>
@@ -107,6 +106,16 @@
                         </a>
                     @endif
                 </li>
+                @if ($user && $user->role === 'admin')
+                    <li class="menu-title mt-2">Laporan</li>
+                    <li>
+
+                        <a href="{{ route('laporan.index') }}">
+                            <i data-feather="file-text"></i>
+                            <span> Laporan </span>
+                        </a>
+                    </li>
+                @endif
             </ul>
 
         </div>

@@ -64,7 +64,7 @@
                     <div class="d-flex justify-content-between">
                         <div>
                             <h4 class="mb-0">
-                                {{ $mahasiswas->where('riwayatAkademik.status_validasi', 'invalid')->count() }}</h4>
+                                {{ $mahasiswas->where('riwayatAkademik.status_validasi', 'tidak valid')->count() }}</h4>
                             <p class="mb-0">Invalid</p>
                         </div>
                         <div class="align-self-center">
@@ -109,18 +109,21 @@
                     <div class="row mb-3">
                         <div class="col-md-4">
                             <select class="form-select" id="statusFilter">
-                                <option value="">Semua Status</option>
+                                <option value="">Semua Riwayat Akademik/Status Validasi</option>
+                                <option value="sudah-diisi">Sudah Diisi</option>
+                                <option value="belum-diisi">Belum Diisi</option>
                                 <option value="valid">Valid</option>
                                 <option value="pending">Pending</option>
                                 <option value="invalid">Invalid</option>
-                                <option value="belum-ada">Belum Ada</option>
                             </select>
                         </div>
                         <div class="col-md-8 text-end">
-                            <button type="button" class="btn btn-success" id="exportBtn" data-bs-toggle="tooltip"
-                                data-bs-placement="top" title="Export Data">
-                                <i class="bi bi-download me-1"></i>Export
-                            </button>
+                            @if (Auth::user()->role === 'admin')
+                                <button type="button" class="btn btn-success" id="exportBtn" data-bs-placement="top"
+                                    title="Export Data" data-bs-toggle="modal" data-bs-target="#exportModal">
+                                    <i class="bi bi-download me-1"></i>Export
+                                </button>
+                            @endif
                         </div>
                     </div>
                     <div class="tab-content">
@@ -132,7 +135,7 @@
                                         <th>Nama Mahasiswa</th>
                                         <th>Prodi</th>
                                         <th>Angkatan</th>
-                                        <th>Status Validasi</th>
+                                        <th>Isi Riwayat Akademik?</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
@@ -145,17 +148,28 @@
                                             <td>{{ $mahasiswa->angkatan->tahun_angkatan ?? '-' }}</td>
                                             <td>
                                                 @if ($mahasiswa->riwayatAkademik)
-                                                    @if ($mahasiswa->riwayatAkademik->status_validasi === 'valid')
-                                                        <span class="badge bg-success">Valid</span>
-                                                    @elseif($mahasiswa->riwayatAkademik->status_validasi === 'pending')
-                                                        <span class="badge bg-warning">Menunggu Validasi</span>
-                                                    @elseif($mahasiswa->riwayatAkademik->status_validasi === 'invalid')
-                                                        <span class="badge bg-danger">Invalid</span>
-                                                    @else
-                                                        <span class="badge bg-secondary">Belum Ada</span>
-                                                    @endif
+                                                    <div>
+                                                        <span class="badge bg-success">
+                                                            <i class="bi bi-check-circle me-1"></i>Sudah Diisi
+                                                        </span>
+                                                        <br>
+                                                        <small class="text-muted">
+                                                            Status:
+                                                            @if ($mahasiswa->riwayatAkademik->status_validasi === 'valid')
+                                                                <span class="badge bg-success">Valid</span>
+                                                            @elseif($mahasiswa->riwayatAkademik->status_validasi === 'pending')
+                                                                <span class="badge bg-warning">Pending</span>
+                                                            @elseif($mahasiswa->riwayatAkademik->status_validasi === 'tidak valid')
+                                                                <span class="badge bg-danger">Invalid</span>
+                                                            @else
+                                                                <span class="badge bg-secondary">-</span>
+                                                            @endif
+                                                        </small>
+                                                    </div>
                                                 @else
-                                                    <span class="badge bg-secondary">Belum Ada</span>
+                                                    <span class="badge bg-secondary">
+                                                        <i class="bi bi-x-circle me-1"></i>Belum Diisi
+                                                    </span>
                                                 @endif
                                             </td>
                                             <td>
@@ -176,6 +190,7 @@
         </div><!-- end col-->
     </div>
     @include('akademik.preview_transkrip')
+    @include('akademik.export')
 @endsection
 
 @push('script')
@@ -192,39 +207,146 @@
                 var status = $(this).val();
 
                 if (status === '') {
-                    $('#basic-datatable').DataTable().column(5).search('').draw();
-                } else if (status === 'belum-ada') {
-                    $('#basic-datatable').DataTable().column(5).search('Belum Ada').draw();
-                } else {
-                    $('#basic-datatable').DataTable().column(5).search(status).draw();
+                    $('#basic-datatable').DataTable().column(4).search('').draw();
+                } else if (status === 'belum-diisi') {
+                    $('#basic-datatable').DataTable().column(4).search('Belum Diisi').draw();
+                } else if (status === 'sudah-diisi') {
+                    $('#basic-datatable').DataTable().column(4).search('Sudah Diisi').draw();
+                } else if (status === 'valid') {
+                    $('#basic-datatable').DataTable().column(4).search('Valid').draw();
+                } else if (status === 'pending') {
+                    $('#basic-datatable').DataTable().column(4).search('Pending').draw();
+                } else if (status === 'invalid') {
+                    $('#basic-datatable').DataTable().column(4).search('Invalid').draw();
                 }
             });
 
-            // Export Button (Tampilan saja)
-            $('#exportBtn').on('click', function() {
-                var $btn = $(this);
-                var originalText = $btn.html();
-
-                // Show loading state
-                $btn.html('<i class="bi bi-arrow-clockwise me-1"></i>Exporting...');
-                $btn.prop('disabled', true);
-
-                // Simulate export process
-                setTimeout(function() {
-                    // Restore button state
-                    $btn.html(originalText);
-                    $btn.prop('disabled', false);
-
-                    // Show success message
-                    $btn.removeClass('btn-primary').addClass('btn-outline-primary');
-                    setTimeout(function() {
-                        $btn.removeClass('btn-outline-primary').addClass('btn-primary');
-                    }, 2000);
-
-                    // Show alert (optional)
-                    alert('Fitur export akan segera tersedia!');
-                }, 1000);
+            // Load data angkatan saat modal export dibuka
+            $('#exportModal').on('show.bs.modal', function() {
+                loadAngkatanList();
+                // Reset form dan info
+                $('#exportForm')[0].reset();
+                $('#exportInfo').hide();
+                $('#emptyDataAlert').hide();
+                $('#exportSubmitBtn').prop('disabled', false);
             });
+
+            // Fungsi untuk mengambil data angkatan
+            function loadAngkatanList() {
+                $.ajax({
+                    url: '{{ route('akademik.angkatanList') }}',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        var select = $('#angkatan_export');
+                        select.empty();
+                        select.append('<option value="">-- Pilih Angkatan --</option>');
+
+                        data.forEach(function(angkatan) {
+                            select.append('<option value="' + angkatan.id_angkatan + '">' +
+                                angkatan.tahun_angkatan + '</option>');
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error loading angkatan:', error);
+                        alert('Gagal memuat data angkatan. Silakan coba lagi.');
+                    }
+                });
+            }
+
+            // Event handler untuk perubahan angkatan
+            $('#angkatan_export').on('change', function() {
+                var selectedAngkatan = $(this).val();
+
+                if (selectedAngkatan) {
+                    loadExportInfo(selectedAngkatan);
+                } else {
+                    $('#exportInfo').hide();
+                    $('#emptyDataAlert').hide();
+                    $('#exportSubmitBtn').prop('disabled', false);
+                }
+            });
+
+            // Fungsi untuk mengambil informasi export
+            function loadExportInfo(angkatanId) {
+                $.ajax({
+                    url: '{{ route('akademik.exportInfo') }}',
+                    type: 'POST',
+                    data: {
+                        angkatan: angkatanId,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            var data = response.data;
+
+                            if (data.total_mahasiswa === 0) {
+                                // Data kosong
+                                $('#emptyDataAlert').show();
+                                $('#emptyDataMessage').text('Tidak ada mahasiswa di angkatan ' + data
+                                    .angkatan);
+                                $('#exportInfo').hide();
+                                $('#exportSubmitBtn').prop('disabled', true);
+                            } else {
+                                // Ada data
+                                $('#emptyDataAlert').hide();
+                                $('#exportInfo').show();
+                                $('#exportSubmitBtn').prop('disabled', false);
+
+                                var fileInfoHtml = `
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <strong>Angkatan:</strong> ${data.angkatan}<br>
+                                            <strong>Total Mahasiswa:</strong> ${data.total_mahasiswa}<br>
+                                            <strong>Dengan Riwayat:</strong> ${data.mahasiswa_with_riwayat}<br>
+                                            <strong>Tanpa Riwayat:</strong> ${data.mahasiswa_without_riwayat}
+                                        </div>
+                                        <div class="col-md-6">
+                                            <strong>Estimasi Ukuran:</strong> ${data.file_size_estimate}<br>
+                                            <strong>Format:</strong> CSV (UTF-8)
+                                        </div>
+                                    </div>
+                                `;
+                                $('#fileInfo').html(fileInfoHtml);
+                            }
+                        } else {
+                            $('#emptyDataAlert').show();
+                            $('#emptyDataMessage').text(response.message ||
+                                'Terjadi kesalahan saat mengambil informasi.');
+                            $('#exportInfo').hide();
+                            $('#exportSubmitBtn').prop('disabled', true);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error loading export info:', error);
+                        $('#emptyDataAlert').show();
+                        $('#emptyDataMessage').text(
+                            'Gagal memuat informasi export. Silakan coba lagi.');
+                        $('#exportInfo').hide();
+                        $('#exportSubmitBtn').prop('disabled', true);
+                    }
+                });
+            }
+
+            // Handle form submission untuk validasi data kosong
+            $('#exportForm').on('submit', function(e) {
+                var selectedAngkatan = $('#angkatan_export').val();
+
+                if (!selectedAngkatan) {
+                    e.preventDefault();
+                    alert('Silakan pilih angkatan terlebih dahulu.');
+                    return false;
+                }
+
+                // Cek apakah ada data kosong
+                if ($('#emptyDataAlert').is(':visible')) {
+                    e.preventDefault();
+                    alert('Tidak ada data untuk diexport. Silakan pilih angkatan lain.');
+                    return false;
+                }
+            });
+
         });
     </script>
 @endpush

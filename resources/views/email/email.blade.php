@@ -28,10 +28,10 @@
                                             Enjinering Indorama</span>
                                     </td>
                                     <td style="width:90px;text-align:right;vertical-align:middle;">
-                                        <img src="https://upload.wikimedia.org/wikipedia/commons/9/9c/Logo_of_Ministry_of_Education_and_Culture_of_Republic_of_Indonesia.svg"
+                                        <img src="https://drive.google.com/uc?export=view&id=1dK9JdIpX8XCyUMpqw10axIUBPo9cGiRD"
                                             alt="Dikti" width="32"
                                             style="display:inline-block;margin-right:8px;vertical-align:middle;">
-                                        <img src="https://cari-bkl.storage.googleapis.com/konten/konten-img_caribengkulu_20250507064155_5900-1746574915-5217.png"
+                                        <img src="https://drive.google.com/uc?export=view&id=1ShkWODw6rr6yEInrOcfIakTuQT2aNGWy"
                                             alt="Diktisaintek Berdampak" width="40"
                                             style="display:inline-block;vertical-align:middle;">
                                     </td>

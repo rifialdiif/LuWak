@@ -7,6 +7,7 @@ use App\Models\Mahasiswa;
 use App\Models\RiwayatAkademik;
 use App\Models\User;
 use App\Models\Dpa;
+use App\Models\Angkatan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -286,6 +287,167 @@ class AkademikController extends Controller
         } catch (\Exception $e) {
             Log::error('Gagal menghapus riwayat akademik: ' . $e->getMessage());
             return back()->with('error', 'Terjadi kesalahan saat menghapus data. Silakan coba lagi atau hubungi admin.');
+        }
+    }
+
+    public function getAngkatanList()
+    {
+        $user = Auth::user();
+
+        // Hanya admin yang dapat mengakses
+        if ($user->role !== 'admin') {
+            abort(403, 'Unauthorized access');
+        }
+
+        $angkatanList = Angkatan::orderBy('tahun_angkatan', 'desc')->get();
+
+        return response()->json($angkatanList);
+    }
+
+    public function getExportInfo(Request $request)
+    {
+        $user = Auth::user();
+
+        // Hanya admin yang dapat mengakses
+        if ($user->role !== 'admin') {
+            abort(403, 'Unauthorized access');
+        }
+
+        $request->validate([
+            'angkatan' => 'required|exists:angkatan,id_angkatan',
+        ]);
+
+        try {
+            // Hitung jumlah mahasiswa di angkatan tersebut
+            $mahasiswaCount = Mahasiswa::where('id_angkatan', $request->angkatan)->count();
+
+            // Ambil nama angkatan
+            $angkatan = Angkatan::find($request->angkatan);
+
+            // Hitung mahasiswa dengan riwayat akademik
+            $mahasiswaWithRiwayat = Mahasiswa::where('id_angkatan', $request->angkatan)
+                ->whereHas('riwayatAkademik')
+                ->count();
+
+            // Hitung mahasiswa tanpa riwayat akademik
+            $mahasiswaWithoutRiwayat = $mahasiswaCount - $mahasiswaWithRiwayat;
+
+            $fileName = 'riwayat_akademik_angkatan_' . $angkatan->tahun_angkatan . '_' . date('Y-m-d_H-i-s') . '.csv';
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'angkatan' => $angkatan->tahun_angkatan,
+                    'total_mahasiswa' => $mahasiswaCount,
+                    'mahasiswa_with_riwayat' => $mahasiswaWithRiwayat,
+                    'mahasiswa_without_riwayat' => $mahasiswaWithoutRiwayat,
+                    'file_name' => $fileName,
+                    'file_size_estimate' => '~' . ($mahasiswaCount * 0.5) . ' KB'
+                ]
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Gagal mendapatkan info export: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat mendapatkan informasi export.'
+            ], 500);
+        }
+    }
+
+    public function exportCsv(Request $request)
+    {
+        $user = Auth::user();
+
+        // Hanya admin yang dapat mengakses
+        if ($user->role !== 'admin') {
+            abort(403, 'Unauthorized access');
+        }
+
+        $request->validate([
+            'angkatan' => 'required|exists:angkatan,id_angkatan',
+        ]);
+
+        try {
+            // Ambil data mahasiswa berdasarkan angkatan
+            $mahasiswas = Mahasiswa::with([
+                'user',
+                'angkatan',
+                'user.prodi',
+                'riwayatAkademik',
+                'prediksi' => function ($query) {
+                    $query->orderBy('tanggal_prediksi', 'desc');
+                }
+            ])
+                ->where('id_angkatan', $request->angkatan)
+                ->get();
+
+            // Validasi jika data kosong
+            if ($mahasiswas->isEmpty()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tidak ada data mahasiswa untuk angkatan yang dipilih.'
+                ], 400);
+            }
+
+            // Ambil nama angkatan untuk nama file
+            $angkatan = Angkatan::find($request->angkatan);
+            $fileName = 'riwayat_akademik_angkatan_' . $angkatan->tahun_angkatan . '_' . date('Y-m-d_H-i-s') . '.csv';
+
+            // Header CSV
+            $headers = [
+                'no',
+                'nim',
+                'nama',
+                'ips_1',
+                'ips_2',
+                'ips_3',
+                'ips_4',
+                'cuti_1',
+                'cuti_2',
+                'cuti_3',
+                'cuti_4',
+                'total_sks_ditempuh',
+                'total_sks_tidak_lulus',
+            ];
+
+            $callback = function () use ($mahasiswas, $headers) {
+                $file = fopen('php://output', 'w');
+
+                // Set UTF-8 BOM untuk encoding yang benar
+                fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+
+                // Tulis header
+                fputcsv($file, $headers);
+
+                // Tulis data
+                foreach ($mahasiswas as $index => $mahasiswa) {
+                    $row = [
+                        $index + 1, // nomor urut
+                        $mahasiswa->user->nip_nim ?? '',
+                        $mahasiswa->user->nama ?? '',
+                        $mahasiswa->riwayatAkademik ? ($mahasiswa->riwayatAkademik->ips_semester_1 ?? '') : '',
+                        $mahasiswa->riwayatAkademik ? ($mahasiswa->riwayatAkademik->ips_semester_2 ?? '') : '',
+                        $mahasiswa->riwayatAkademik ? ($mahasiswa->riwayatAkademik->ips_semester_3 ?? '') : '',
+                        $mahasiswa->riwayatAkademik ? ($mahasiswa->riwayatAkademik->ips_semester_4 ?? '') : '',
+                        $mahasiswa->riwayatAkademik ? ($mahasiswa->riwayatAkademik->status_semester_1 ?? '') : '',
+                        $mahasiswa->riwayatAkademik ? ($mahasiswa->riwayatAkademik->status_semester_2 ?? '') : '',
+                        $mahasiswa->riwayatAkademik ? ($mahasiswa->riwayatAkademik->status_semester_3 ?? '') : '',
+                        $mahasiswa->riwayatAkademik ? ($mahasiswa->riwayatAkademik->status_semester_4 ?? '') : ''
+                    ];
+
+                    fputcsv($file, $row);
+                }
+
+                fclose($file);
+            };
+
+            return response()->stream($callback, 200, [
+                'Content-Type' => 'text/csv; charset=UTF-8',
+                'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Gagal export CSV: ' . $e->getMessage());
+            return back()->with('error', 'Terjadi kesalahan saat export data. Silakan coba lagi atau hubungi admin.');
         }
     }
 

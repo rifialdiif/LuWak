@@ -2,7 +2,7 @@
     <div class="position-fixed top-0 end-0 p-3" style="z-index: 9999">
         <div class="toast" id="welcomeToast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="4000">
             <div class="toast-header d-flex align-items-center">
-                <img src="{{ asset('assets/images/logo-dark.png') }}" class="rounded me-2" alt="Logo"
+                <img src="{{ asset('assets/images/delusi 5.png') }}" class="rounded me-2" alt="Logo"
                     style="width: 20px; height: 20px;">
                 <div class="flex-grow-1"></div>
                 <button type="button" class="btn-close ms-auto" data-bs-dismiss="toast" aria-label="Close"></button>
@@ -47,7 +47,7 @@
                             {{ Auth::user()->nama }}
                         </div>
                         <div class="text-muted small" style="line-height: 1;">
-                            {{ ucfirst(Auth::user()->role) }}
+                            {{ ucfirst(Auth::user()->role) }} - {{ ucfirst(Auth::user()->prodi->nama_prodi) }}
                         </div>
                     </div>
                     <i class="uil uil-angle-down ms-2"></i>
@@ -69,7 +69,7 @@
                     <div class="dropdown-header noti-title">
                         <h6 class="text-overflow m-0">Welcome, {{ Auth::user()->nama }}!</h6>
                     </div>
-                    <a href="pages-profile.html" class="dropdown-item notify-item">
+                    <a href="{{ route('profile.index') }}" class="dropdown-item notify-item">
                         <i data-feather="user" class="icon-dual icon-xs me-1"></i><span>My Account</span>
                     </a>
 
@@ -96,21 +96,21 @@
         <div class="logo-box">
             <a href="#" class="logo logo-dark">
                 <span class="logo-sm">
-                    <img src="{{ asset('assets/images/logo-sm.png') }}" alt="" height="24">
+                    <img src="{{ asset('assets/images/delusi 5.png') }}" alt="" height="24">
                     <!-- <span class="logo-lg-text-light">Shreyu</span> -->
                 </span>
                 <span class="logo-lg">
-                    <img src="{{ asset('assets/images/logo-dark.png') }}" alt="" height="24">
+                    <img src="{{ asset('assets/images/delusi.png') }}" alt="" height="24">
                     <!-- <span class="logo-lg-text-light">S</span> -->
                 </span>
             </a>
 
             <a href="#" class="logo logo-light">
                 <span class="logo-sm">
-                    <img src="{{ asset('assets/images/logo-sm.png') }}" alt="" height="24">
+                    <img src="{{ asset('assets/images/delusi 5.png') }}" alt="" width="34" height="48">
                 </span>
                 <span class="logo-lg">
-                    <img src="{{ asset('assets/images/logo-light.png') }}" alt="" height="24">
+                    <img src="{{ asset('assets/images/delusi.png') }}" alt="" height="24">
                 </span>
             </a>
         </div>
@@ -139,7 +139,7 @@
     </div>
 </div>
 
-@push('scripts')
+@push('script')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var toastEl = document.getElementById('welcomeToast');

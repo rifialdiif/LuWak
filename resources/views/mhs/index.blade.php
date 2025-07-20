@@ -50,7 +50,7 @@
                                         <th>DPA</th>
                                         <th>No HP Orang Tua</th>
                                         <th>E-mail Orang Tua</th>
-                                        <th>Hasil Prediksi</th>
+                                        {{-- <th>Hasil Prediksi</th> --}}
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
@@ -65,7 +65,7 @@
                                             </td>
                                             <td>{{ $mhs->no_hp_orang_tua }}</td>
                                             <td>{{ $mhs->email_ortu }}</td>
-                                            <td>{{ $mhs->status_prediksi_kelulusan ?? '-' }}</td>
+                                            {{-- <td>{{ $mhs->status_prediksi_kelulusan ?? '-' }}</td> --}}
                                             <td>
                                                 <a href="#" class="btn icon btn-warning btn-edit-mahasiswa"
                                                     data-bs-toggle="modal" data-bs-target="#editMahasiswaModal"
