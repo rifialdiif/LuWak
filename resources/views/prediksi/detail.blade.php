@@ -345,13 +345,7 @@
                                 </div>
                                 <div class="fw-bold text-center" style="font-size:2rem;">${confidence}% Confidence Score</div>
                                 <hr>
-                                <div class="mb-2 text-start">
-                                    <div class="fw-bold mb-2">${faktorTitle}</div>
-                                    <div>
-                                        ${(hasil.faktor_risiko ?? []).map(f => `<span class="badge rounded-pill border border-secondary text-dark me-2 mb-1" style="background:#fff;">${f}</span>`).join('')}
-                                    </div>
-                                </div>
-                                <hr>
+
                                 <div class="mt-3">
                                 @if (Auth::user()->role !== 'mahasiswa')
                                     <button

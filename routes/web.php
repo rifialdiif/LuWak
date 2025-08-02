@@ -105,7 +105,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // Route auth tetap di luar middleware agar bisa diakses publik
-Route::group(['prefix' => 'auth'], function () {
+Route::group(['prefix' => ''], function () {
     Route::get('/', [AuthController::class, 'index'])->name('login');
     Route::post('login', [AuthController::class, 'authenticate'])->name('login.process');
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');

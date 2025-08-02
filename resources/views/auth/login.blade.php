@@ -12,7 +12,7 @@
                                 <div class="col-lg-6 p-4">
                                     <div class="mx-auto text-center mb-4">
                                         <a href="index.html">
-                                            <img src="{{ asset('assets/images/logo-dark.png') }}" alt="Logo"
+                                            <img src="{{ asset('assets/images/bis.png') }}" alt="Logo"
                                                 height="32" />
                                         </a>
                                     </div>
@@ -58,16 +58,32 @@
                                         style="background: linear-gradient(135deg, #e0e7ff 0%, #f8fafc 100%); min-height: 100%;">
                                         <div
                                             class="d-flex flex-column align-items-center justify-content-center h-100 p-4">
-                                            <img src="{{ asset('assets/images/ilustrasi1.png') }}" alt="Pemanis"
-                                                class="img-fluid rounded mb-4"
-                                                style="width: 60%; max-width: 245px; min-width: 180px; height: auto; box-shadow: 0 4px 24px rgba(0,0,0,0.08); object-fit: contain; background: #fff6;" />
-                                            <div class="auth-user-testimonial text-center mt-4 w-100">
-                                                <p class="fs-24 fw-bold text-dark mb-1">Delusi</p>
+                                            <!-- Logo kecil di atas -->
+                                            <div class="d-flex justify-content-center mb-3" style="gap: 16px;">
+                                                <img src="{{ asset('assets/images/logo_pei.png') }}" alt="Foto 1"
+                                                    style="width:48px; height:48px; object-fit:cover; display: block;" />
+                                                <img src="{{ asset('assets/images/trpl_nobg.png') }}" alt="Foto 2"
+                                                    style="width:155px; height:48px; object-fit:cover; display: block;" />
+                                                <img src="{{ asset('assets/images/logo_diktisaintek.png') }}"
+                                                    alt="Foto 3" class="rounded-circle border"
+                                                    style="width:48px; height:48px; object-fit:cover; background:#fff6; box-shadow:0 2px 8px rgba(0,0,0,0.07); display: block;" />
+                                            </div>
+
+                                            <!-- Gambar utama -->
+                                            <img src="{{ asset('assets/images/ilustrasih.jpg') }}" alt="Pemanis"
+                                                class="img-fluid rounded"
+                                                style="width: 60%; max-width: 245px; min-width: 180px; height: auto; margin-bottom: 1rem; box-shadow: 0 4px 24px rgba(0,0,0,0.08); object-fit: contain; background: #fff6;" />
+                                            <div style="height: 90px;"></div>
+
+                                            <!-- Tulisan Delusi -->
+                                            <div class="auth-user-testimonial text-center" style="margin-top: 1rem;">
+                                                <p class="fs-24 fw-bold text-dark mb-1">DeLuSi</p>
                                                 <p class="lead text-dark">"Deteksi Lulus, Bukan Sekadar Delusi"</p>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+
 
                             </div> <!-- end card-body -->
                         </div>

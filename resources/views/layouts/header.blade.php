@@ -40,7 +40,7 @@
                 <a class="nav-link dropdown-toggle nav-user me-0 d-flex align-items-center" data-bs-toggle="dropdown"
                     href="#" role="button" aria-haspopup="false" aria-expanded="false"
                     style="padding: 0.5rem 1rem;">
-                    <img src="{{ asset('assets/images/users/avatar-2.jpg') }}" alt="user-image" class="rounded-circle"
+                    <img src="{{ asset('assets/images/pengguna.png') }}" alt="user-image" class="rounded-circle"
                         style="width: 36px; height: 36px;">
                     <div class="ms-2 text-start">
                         <div class="fw-semibold" style="line-height: 1.2;">
@@ -100,7 +100,7 @@
                     <!-- <span class="logo-lg-text-light">Shreyu</span> -->
                 </span>
                 <span class="logo-lg">
-                    <img src="{{ asset('assets/images/delusi.png') }}" alt="" height="24">
+                    <img src="{{ asset('assets/images/bis.png') }}" alt="" height="24">
                     <!-- <span class="logo-lg-text-light">S</span> -->
                 </span>
             </a>
@@ -110,7 +110,7 @@
                     <img src="{{ asset('assets/images/delusi 5.png') }}" alt="" width="34" height="48">
                 </span>
                 <span class="logo-lg">
-                    <img src="{{ asset('assets/images/delusi.png') }}" alt="" height="24">
+                    <img src="{{ asset('assets/images/bis.png') }}" alt="" height="24">
                 </span>
             </a>
         </div>

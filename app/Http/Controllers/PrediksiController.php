@@ -131,7 +131,7 @@ class PrediksiController extends Controller
             "total_sks_tidak_lulus" => (int) ($riwayat->total_sks_tidak_lulus ?? 0),
         ];
 
-        $apiUrl = 'http://127.0.0.1:5000/predict';
+        $apiUrl = 'https://ml-model-api-388345422624.asia-southeast1.run.app/predict';
         $response = Http::post($apiUrl, $body);
 
         if ($response->successful()) {

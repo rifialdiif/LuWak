@@ -11,8 +11,8 @@
                 <strong>Customize </strong> the overall color scheme, sidebar menu, etc.
             </div>
 
-            <h6 class="fw-medium mt-4 mb-2 pb-1">Color Scheme</h6>
-            <div class="form-switch mb-1">
+            {{-- <h6 class="fw-medium mt-4 mb-2 pb-1">Color Scheme</h6> --}}
+            {{-- <div class="form-switch mb-1">
                 <input type="checkbox" class="form-check-input" name="color-scheme-mode" value="light"
                     id="light-mode-check" checked />
                 <label class="form-check-label" for="light-mode-check">Light Mode</label>
@@ -22,13 +22,12 @@
                 <input type="checkbox" class="form-check-input" name="color-scheme-mode" value="dark"
                     id="dark-mode-check" />
                 <label class="form-check-label" for="dark-mode-check">Dark Mode</label>
-            </div>
+            </div> --}}
 
             <!-- Width -->
             <h6 class="fw-medium mt-4 mb-2 pb-1">Width</h6>
             <div class="form-switch mb-1">
-                <input type="checkbox" class="form-check-input" name="width" value="fluid" id="fluid-check"
-                    checked />
+                <input type="checkbox" class="form-check-input" name="width" value="fluid" id="fluid-check" checked />
                 <label class="form-check-label" for="fluid-check">Fluid</label>
             </div>
             <div class="form-switch mb-1">
@@ -102,8 +101,8 @@
             <h6 class="fw-medium mt-4 mb-2 pb-1">Topbar</h6>
 
             <div class="form-switch mb-1">
-                <input type="checkbox" class="form-check-input" name="topbar-color" value="dark"
-                    id="darktopbar-check" checked />
+                <input type="checkbox" class="form-check-input" name="topbar-color" value="dark" id="darktopbar-check"
+                    checked />
                 <label class="form-check-label" for="darktopbar-check">Dark</label>
             </div>
 

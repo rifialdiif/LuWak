@@ -87,7 +87,7 @@
                         <!-- FOTO, NAMA, NIM -->
                         <div class="col-md-3 d-flex flex-column align-items-center justify-content-start">
                             <div class="mb-2" style="width:130px; height:130px;">
-                                <img src="{{ asset('assets/images/users/avatar-1.jpg') }}" alt="Foto Mahasiswa"
+                                <img src="{{ asset('assets/images/pengguna.png') }}" alt="Foto Mahasiswa"
                                     class="img-fluid rounded-circle border"
                                     style="width:100%; height:100%; object-fit:cover; background:#f4f4f4;">
                             </div>

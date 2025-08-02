@@ -35,7 +35,7 @@
                     <div class="text-center">
 
                         <div>
-                            <img src="{{ asset('assets/images/404.png') }}" alt="" class="img-fluid" />
+                            <img src="{{ asset('assets/images/404_crop.png') }}" alt="" class="img-fluid" />
                         </div>
                     </div>
 
