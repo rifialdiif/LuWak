@@ -148,6 +148,7 @@ class DashboardController extends Controller
             ['label' => 'Indeks Prestasi Semester 4', 'level' => 'High Risk', 'color' => 'danger', 'bg' => '#fff1f1'],
             ['label' => 'Total SKS Ditempuh', 'level' => 'Medium Risk', 'color' => 'secondary text-clear', 'bg' => '#fff6e6'],
             ['label' => 'Indeks Prestasi Semester 1', 'level' => 'Medium Risk', 'color' => 'secondary text-clear', 'bg' => '#fff6e6'],
+            ['label' => 'Indeks Prestasi Semester 2', 'level' => 'Medium Risk', 'color' => 'secondary text-clear', 'bg' => '#fff6e6'],
         ];
 
         // Jika mahasiswa, dashboard kosong
@@ -165,7 +166,7 @@ class DashboardController extends Controller
             $faq = [
                 ['q' => 'Bagaimana cara sistem memprediksi kelulusan saya?', 'a' => 'Sistem menggunakan algoritma Random Forest yang menganalisis data akademik Anda seperti IPK, jumlah SKS, mata kuliah yang tidak lulus, dan pola akademik untuk memberikan prediksi kelulusan tepat waktu.'],
                 ['q' => 'Seberapa akurat prediksi yang diberikan?', 'a' => 'Berdasarkan pengujian dengan data historis mahasiswa TRPL PEI, sistem memiliki tingkat akurasi di atas 80%. Namun, prediksi ini bersifat estimasi dan dapat berubah seiring perkembangan akademik Anda.'],
-                ['q' => 'Dokumen apa saja yang perlu saya upload?', 'a' => 'Anda perlu mengupload transkrip nilai terbaru, Kartu Hasil Studi (KHS) semester aktif, dan Kartu Rencana Studi (KRS). Pastikan dokumen dalam format PDF dan dapat dibaca dengan jelas.'],
+                ['q' => 'Dokumen apa saja yang perlu saya upload?', 'a' => 'Anda perlu mengupload transkrip nilai terbaru, Kartu Hasil Studi (KHS) semester aktif, dan Kartu Rencana Studi (KRS). Pastikan semua dokumen digabungkan dalam satu file berformat PDF dan dapat dibaca dengan jelas.'],
                 ['q' => 'Bagaimana cara memperbaiki dokumen tidak valid?', 'a' => 'Silakan upload ulang dokumen yang sesuai format dan pastikan data benar.'],
                 ['q' => 'Bagaimana jika prediksi saya menunjukkan risiko tidak lulus tepat waktu?', 'a' => 'Segera konsultasi dengan dosen pembimbing akademik untuk membuat rencana perbaikan. Jangan lupa untuk melakukan refleksi diri dan mulai berbenah agar dapat memperbaiki performa akademik Anda.'],
                 ['q' => 'Siapa yang bisa saya hubungi jika ada masalah?', 'a' => 'Silakan hubungi DPA atau admin prodi Anda.'],

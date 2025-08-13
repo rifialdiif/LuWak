@@ -46,10 +46,64 @@
                     <div class="page-title-box d-flex justify-content-between align-items-center">
                         <h4 class="page-title header-title mb-0">Data User</h4>
                         <div class="btn-list text-right d-flex">
+                            {{--  --}}
                             <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                                 data-bs-target="#userModal">
                                 <i data-feather="plus"></i> Tambah
                             </button>
+                        </div>
+                    </div>
+
+
+
+                    <!-- Filter Section -->
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label for="roleFilter" class="form-label">Filter Role:</label>
+                            <select class="form-select" id="roleFilter" name="role_filter">
+                                <option value="all">Semua Role</option>
+                                @foreach ($roles as $role)
+                                    <option value="{{ $role }}"
+                                        {{ request('role_filter') == $role ? 'selected' : '' }}>
+                                        {{ ucfirst($role) }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="prodiFilter" class="form-label">Filter Prodi:</label>
+                            <select class="form-select" id="prodiFilter" name="prodi_filter">
+                                <option value="all">Semua Prodi</option>
+                                @foreach ($prodis as $prodi)
+                                    <option value="{{ $prodi->id_prodi }}"
+                                        {{ request('prodi_filter') == $prodi->id_prodi ? 'selected' : '' }}>
+                                        {{ $prodi->nama_prodi }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button type="button" class="btn btn-secondary" id="resetFilter">
+                                <i data-feather="refresh-cw"></i> Reset Filter
+                            </button>
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end justify-content-end">
+                            <div class="text-muted">
+                                @if (
+                                    (request('role_filter') && request('role_filter') !== 'all') ||
+                                        (request('prodi_filter') && request('prodi_filter') !== 'all'))
+                                    Menampilkan {{ $users->count() }} user
+                                    @if (request('role_filter') && request('role_filter') !== 'all')
+                                        dengan role: <strong>{{ ucfirst(request('role_filter')) }}</strong>
+                                    @endif
+                                    @if (request('prodi_filter') && request('prodi_filter') !== 'all')
+                                        dari prodi:
+                                        <strong>{{ $prodis->firstWhere('id_prodi', request('prodi_filter'))->nama_prodi ?? '' }}</strong>
+                                    @endif
+                                @else
+                                    Total {{ $users->count() }} user
+                                @endif
+                            </div>
                         </div>
                     </div>
 
@@ -123,6 +177,55 @@
 
 @push('script')
     <script>
+        // Filter functionality
+        $(document).ready(function() {
+            // Handle role filter change
+            $('#roleFilter').on('change', function() {
+                applyFilters();
+            });
+
+            // Handle prodi filter change
+            $('#prodiFilter').on('change', function() {
+                applyFilters();
+            });
+
+            // Handle reset filter
+            $('#resetFilter').on('click', function() {
+                var currentUrl = new URL(window.location);
+                currentUrl.searchParams.delete('role_filter');
+                currentUrl.searchParams.delete('prodi_filter');
+                window.location.href = currentUrl.toString();
+            });
+
+            // Handle export button
+            $('#exportBtn').on('click', function() {
+                var currentUrl = new URL(window.location);
+                currentUrl.searchParams.set('export', '1');
+                window.location.href = currentUrl.toString();
+            });
+
+            // Function to apply all filters
+            function applyFilters() {
+                var selectedRole = $('#roleFilter').val();
+                var selectedProdi = $('#prodiFilter').val();
+                var currentUrl = new URL(window.location);
+
+                if (selectedRole === 'all') {
+                    currentUrl.searchParams.delete('role_filter');
+                } else {
+                    currentUrl.searchParams.set('role_filter', selectedRole);
+                }
+
+                if (selectedProdi === 'all') {
+                    currentUrl.searchParams.delete('prodi_filter');
+                } else {
+                    currentUrl.searchParams.set('prodi_filter', selectedProdi);
+                }
+
+                window.location.href = currentUrl.toString();
+            }
+        });
+
         $(document).on('click', '.btn-edit-user', function() {
             $('#edit_id_user').val($(this).data('id'));
             $('#edit_nip_nim').val($(this).data('nip_nim'));

@@ -91,7 +91,7 @@
                                             class="text-danger">*</span></label>
                                     <input type="number" min="0" class="form-control form-control-lg"
                                         name="sks_lulus"
-                                        value="{{ old('sks_lulus', $mahasiswa->riwayatAkademik->total_sks_lulus ?? '') }}"
+                                        value="{{ old('sks_lulus', $mahasiswa->riwayatAkademik->total_sks_ditempuh ?? '') }}"
                                         placeholder="120" required>
                                 </div>
                             </div>

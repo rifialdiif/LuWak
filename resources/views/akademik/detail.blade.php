@@ -156,7 +156,7 @@
                                     <div class="d-flex flex-column">
                                         <div class="label-row">
                                             <i class="bi bi-file-earmark-text me-2"></i>
-                                            <span class="fw-semibold">File Transkrip</span>
+                                            <span class="fw-semibold">File Pendukung</span>
                                         </div>
                                         <div class="d-flex align-items-center gap-2 value-row">
                                             <span class="text-muted">

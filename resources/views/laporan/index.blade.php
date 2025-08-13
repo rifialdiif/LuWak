@@ -2,13 +2,13 @@
 
 @section('content')
     <div class="container-fluid">
-        <div class="row">
+        {{-- <div class="row">
             <div class="col-12">
                 <div class="page-title-box">
                     <h4 class="page-title">Laporan Prediksi Kelulusan</h4>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">

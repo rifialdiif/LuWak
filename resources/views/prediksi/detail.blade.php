@@ -20,7 +20,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 @endif
-                @if (session('error'))
+                @if (session('error') && Auth::user()->role !== 'mahasiswa')
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         {{ session('error') }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -188,18 +188,30 @@
                                 </div>
                             </div>
                             <div class="mt-4">
-                                <form id="formPrediksi"
-                                    action="{{ route('prediksi.predict', $mahasiswa->id_mahasiswa) }}" method="POST">
-                                    @csrf
-                                    <button id="btnPrediksi"
-                                        class="btn btn-primary w-100 py-2 rounded-3 fw-bold fs-6 d-flex align-items-center justify-content-center"
-                                        style="gap:0.5rem;" type="submit">
-                                        <span id="btnText"><i class="bi bi-journal-bookmark fs-5"></i> Prediksi
-                                            Kelulusan</span>
-                                        <span id="spinner" class="spinner-border spinner-border-sm ms-2 d-none"
-                                            role="status" aria-hidden="true"></span>
-                                    </button>
-                                </form>
+                                @if (isset($mahasiswa->riwayatAkademik))
+                                    <form id="formPrediksi"
+                                        action="{{ route('prediksi.predict', $mahasiswa->id_mahasiswa) }}"
+                                        method="POST">
+                                        @csrf
+                                        <button id="btnPrediksi"
+                                            class="btn btn-primary w-100 py-2 rounded-3 fw-bold fs-6 d-flex align-items-center justify-content-center"
+                                            style="gap:0.5rem;" type="submit">
+                                            <span id="btnText"><i class="bi bi-journal-bookmark fs-5"></i> Prediksi
+                                                Kelulusan</span>
+                                            <span id="spinner" class="spinner-border spinner-border-sm ms-2 d-none"
+                                                role="status" aria-hidden="true"></span>
+                                        </button>
+                                    </form>
+                                @else
+                                    <div class="mt-2">
+                                        <a href="{{ route('akademik.show', $mahasiswa->id_mahasiswa) }}"
+                                            class="btn btn-outline-primary w-100 py-2 rounded-3 fw-bold fs-6 d-flex align-items-center justify-content-center"
+                                            style="gap:0.5rem;">
+                                            <span><i class="bi bi-file-earmark-text fs-5"></i> Isi Data Riwayat
+                                                Akademik</span>
+                                        </a>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -207,11 +219,21 @@
                         <div id="hasilPrediksiSection"
                             class="bg-white rounded-4 shadow-sm p-4 h-100 d-flex flex-column align-items-center justify-content-center text-center">
                             <div id="hasilPrediksiContent">
-                                <div class="text-secondary">
-                                    <i class="bi bi-journal-bookmark fs-1"></i>
-                                    <div class="mt-2">Belum ada hasil prediksi<br><span class="text-muted">Klik tombol
-                                            prediksi untuk memulai analisis</span></div>
-                                </div>
+                                @if (isset($mahasiswa->riwayatAkademik))
+                                    <div class="text-secondary">
+                                        <i class="bi bi-journal-bookmark fs-1"></i>
+                                        <div class="mt-2">Belum ada hasil prediksi<br><span class="text-muted">Klik
+                                                tombol
+                                                prediksi untuk memulai analisis</span></div>
+                                    </div>
+                                @else
+                                    <div class="text-warning">
+                                        <i class="bi bi-exclamation-triangle fs-1"></i>
+                                        <div class="mt-2">Data Riwayat Akademik Belum Tersedia<br><span
+                                                class="text-muted">Silakan isi data riwayat akademik terlebih dahulu</span>
+                                        </div>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -229,6 +251,104 @@
     </div>
     @include('prediksi.form_intervensi')
     @include('akademik.preview_transkrip')
+
+    <!-- Modal Isi Riwayat Akademik -->
+    <div class="modal fade" id="modalIsiRiwayat" tabindex="-1" aria-labelledby="modalIsiRiwayatLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalIsiRiwayatLabel">
+                        <i class="bi bi-exclamation-triangle text-warning me-2"></i>
+                        Data Riwayat Akademik Belum Tersedia
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @if (Auth::user()->role === 'mahasiswa')
+                        <div class="alert alert-warning" role="alert">
+                            <i class="bi bi-info-circle me-2"></i>
+                            <strong>Perhatian!</strong> Untuk dapat melakukan prediksi kelulusan, Anda harus mengisi data
+                            riwayat akademik terlebih dahulu.
+                        </div>
+                        <div class="mb-3">
+                            <h6 class="fw-bold">Data yang diperlukan:</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="bi bi-check-circle text-success me-2"></i>Indeks Prestasi Semester (IPS)
+                                    semester
+                                    1-4</li>
+                                <li><i class="bi bi-check-circle text-success me-2"></i>Status mahasiswa per semester
+                                    (Aktif/Cuti/Non-Aktif)</li>
+                                <li><i class="bi bi-check-circle text-success me-2"></i>Total SKS yang ditempuh</li>
+                                <li><i class="bi bi-check-circle text-success me-2"></i>Total SKS yang tidak lulus</li>
+                                <li><i class="bi bi-check-circle text-success me-2"></i>Dokumen pendukung dari riwayat
+                                    akademik
+                                    diatas dalam bentuk PDF
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="mb-3">
+                            <h6 class="fw-bold">Cara mengisi data:</h6>
+                            <ol>
+                                <li>Klik tombol "Isi Data Riwayat Akademik" di bawah</li>
+                                <li>Anda akan diarahkan ke halaman detail akademik mahasiswa</li>
+                                <li>Klik tombol "Input Data Akademik" pada halaman tersebut</li>
+                                <li>Isi semua data yang diperlukan dan upload dokumen pendukung</li>
+                                <li>Setelah data tersimpan, kembali ke halaman ini untuk melakukan prediksi</li>
+                            </ol>
+                        </div>
+                        <div class="alert alert-warning" role="alert">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            <strong>Catatan:</strong> Pastikan data yang diisi akurat dan sesuai dengan dokumen pendukung
+                            yang diupload.
+                        </div>
+                    @else
+                        <div class="alert alert-info" role="alert">
+                            <i class="bi bi-info-circle me-2"></i>
+                            <strong>Informasi!</strong> Mahasiswa <strong>{{ $mahasiswa->user->nama ?? 'N/A' }}</strong>
+                            belum memiliki data riwayat akademik.
+                        </div>
+                        <div class="mb-3">
+                            <h6 class="fw-bold">Data yang diperlukan untuk prediksi:</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="bi bi-check-circle text-success me-2"></i>Indeks Prestasi Semester (IPS)
+                                    semester 1-4</li>
+                                <li><i class="bi bi-check-circle text-success me-2"></i>Status mahasiswa per semester
+                                    (Aktif/Cuti/Non-Aktif)</li>
+                                <li><i class="bi bi-check-circle text-success me-2"></i>Total SKS yang ditempuh</li>
+                                <li><i class="bi bi-check-circle text-success me-2"></i>Total SKS yang tidak lulus</li>
+                                <li><i class="bi bi-check-circle text-success me-2"></i>Dokumen pendukung dari riwayat
+                                    akademik
+                                    diatas dalam bentuk PDF
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="mb-3">
+                            <h6 class="fw-bold">Cara mengisi data:</h6>
+                            <ol>
+                                <li>Klik tombol "Isi Data Riwayat Akademik" di bawah</li>
+                                <li>Anda akan diarahkan ke halaman detail akademik mahasiswa</li>
+                                <li>Klik tombol "Input Data Akademik" pada halaman tersebut</li>
+                                <li>Isi semua data yang diperlukan dan upload dokumen pendukung</li>
+                                <li>Setelah data tersimpan, kembali ke halaman ini untuk melakukan prediksi</li>
+                            </ol>
+                        </div>
+                        <div class="alert alert-warning" role="alert">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            <strong>Catatan:</strong> Pastikan data yang diisi akurat dan sesuai dengan dokumen pendukung
+                            yang diupload.
+                        </div>
+                    @endif
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    <a href="{{ route('akademik.show', $mahasiswa->id_mahasiswa) }}" class="btn btn-primary">
+                        <i class="bi bi-file-earmark-text me-2"></i>Isi Data Riwayat Akademik
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('styles')
@@ -268,6 +388,16 @@
                     new bootstrap.Tab(tabBtn).show();
                 }
             }
+
+            // Auto show modal if mahasiswa doesn't have riwayat akademik
+            @if (isset($showRiwayatModal) && $showRiwayatModal)
+                // Show modal automatically after a short delay
+                setTimeout(function() {
+                    var modal = new bootstrap.Modal(document.getElementById('modalIsiRiwayat'));
+                    modal.show();
+                }, 500);
+            @endif
+
             const form = document.getElementById('formPrediksi');
             if (!form) return;
             form.addEventListener('submit', function(e) {
@@ -405,6 +535,15 @@
 
                     // Tampilkan modal (Bootstrap 5)
                     var modal = new bootstrap.Modal(document.getElementById('modalIntervensi'));
+                    modal.show();
+                }
+            });
+
+            // Handler tombol Isi Riwayat Akademik
+            document.body.addEventListener('click', function(e) {
+                if (e.target && e.target.id === 'btnIsiRiwayat') {
+                    // Tampilkan modal Isi Riwayat Akademik
+                    var modal = new bootstrap.Modal(document.getElementById('modalIsiRiwayat'));
                     modal.show();
                 }
             });

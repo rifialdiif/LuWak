@@ -10,13 +10,30 @@ use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $title = 'User';
-        $users = User::with('prodi')->get();
+
+        // Query dasar
+        $query = User::with('prodi');
+
+        // Filter berdasarkan role jika ada
+        if ($request->filled('role_filter') && $request->role_filter !== 'all') {
+            $query->where('role', $request->role_filter);
+        }
+
+        // Filter berdasarkan prodi jika ada
+        if ($request->filled('prodi_filter') && $request->prodi_filter !== 'all') {
+            $query->where('id_prodi', $request->prodi_filter);
+        }
+
+
+
+        $users = $query->get();
         $prodis = Prodi::all();
         // Ambil enum role dari database
         $roles = $this->getEnumValues('user', 'role');
+
         return view('user.index', compact('title', 'users', 'prodis', 'roles'));
     }
 

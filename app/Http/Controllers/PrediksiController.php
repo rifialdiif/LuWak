@@ -8,12 +8,27 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use App\Models\Prediksi;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
 
 class PrediksiController extends Controller
 {
     public function index(Request $request)
     {
         $user = Auth::user();
+
+        // Jika user adalah mahasiswa, langsung arahkan ke halaman detail mereka sendiri
+        if ($user->role === 'mahasiswa') {
+            $mahasiswaUser = Mahasiswa::where('id_user', $user->id_user)->first();
+            if ($mahasiswaUser) {
+                return redirect()->route('prediksi.show', $mahasiswaUser->id_mahasiswa);
+            } else {
+                // Jika mahasiswa tidak ditemukan, tampilkan pesan error
+                return redirect()->back()->with('error', 'Data mahasiswa tidak ditemukan. Silakan hubungi admin.');
+            }
+        }
+
         $mahasiswas = collect();
 
         if ($user->role === 'admin') {
@@ -78,6 +93,15 @@ class PrediksiController extends Controller
             'riwayatAkademik',
         ])->findOrFail($id);
 
+        // Validasi apakah mahasiswa memiliki data riwayat akademik
+        if (!$mahasiswa->riwayatAkademik) {
+            // Untuk semua role, tetap tampilkan halaman detail tapi dengan flag
+            $showRiwayatModal = true;
+            $riwayatPrediksi = collect(); // Empty collection
+            $riwayatNotifikasi = collect(); // Empty collection
+            return view('prediksi.detail', compact('mahasiswa', 'riwayatPrediksi', 'riwayatNotifikasi', 'showRiwayatModal'));
+        }
+
         // Ambil riwayat prediksi terbaru
         $riwayatPrediksi = \App\Models\Prediksi::with('user')
             ->where('id_mahasiswa', $id)
@@ -85,7 +109,14 @@ class PrediksiController extends Controller
             ->take(10)
             ->get();
 
-        return view('prediksi.detail', compact('mahasiswa', 'riwayatPrediksi'));
+        // Ambil riwayat notifikasi terbaru
+        $riwayatNotifikasi = \App\Models\Notifikasi::with('user')
+            ->where('id_mahasiswa', $id)
+            ->orderByDesc('waktu_kirim')
+            ->take(10)
+            ->get();
+
+        return view('prediksi.detail', compact('mahasiswa', 'riwayatPrediksi', 'riwayatNotifikasi'));
     }
 
     public function formIntervensi($id)
@@ -118,6 +149,15 @@ class PrediksiController extends Controller
         $mahasiswa = Mahasiswa::with('riwayatAkademik', 'user.prodi')->findOrFail($id);
         $riwayat = $mahasiswa->riwayatAkademik;
 
+        // Validasi apakah mahasiswa memiliki data riwayat akademik
+        if (!$riwayat) {
+            $message = 'Mahasiswa tidak memiliki data riwayat akademik. Silakan hubungi admin untuk mengisi data riwayat akademik.';
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => $message], 400);
+            }
+            return redirect()->route('prediksi.show', $id)->with('error', $message);
+        }
+
         $body = [
             "ips_1" => (float) ($riwayat->ips_semester_1 ?? 0),
             "ips_2" => (float) ($riwayat->ips_semester_2 ?? 0),
@@ -131,57 +171,132 @@ class PrediksiController extends Controller
             "total_sks_tidak_lulus" => (int) ($riwayat->total_sks_tidak_lulus ?? 0),
         ];
 
-        $apiUrl = 'https://ml-model-api-388345422624.asia-southeast1.run.app/predict';
-        $response = Http::post($apiUrl, $body);
+        $apiUrl = 'http://127.0.0.1:5000/predict';
 
-        if ($response->successful()) {
-            $result = $response->json();
+        try {
+            $response = Http::timeout(30)->post($apiUrl, $body);
 
-            // Jika role mahasiswa, JANGAN simpan ke database (aktifkan baris di bawah jika ingin simpan)
-            // if ($user->role === 'mahasiswa') {
-            //     // Prediksi::create([
-            //     //     'id_mahasiswa'      => $mahasiswa->id_mahasiswa,
-            //     //     'id_user'           => $user->id_user,
-            //     //     'tanggal_prediksi'  => now(),
-            //     //     'hasil_prediksi'    => $result['prediction'],
-            //     //     'confidence_score'  => $result['confidence_score'],
-            //     // ]);
-            //     if ($request->ajax() || $request->wantsJson()) {
-            //         return response()->json(['success' => true, 'data' => $result]);
-            //     }
-            //     return redirect()->route('prediksi.show', $id)->with('hasil_prediksi', $result);
-            // }
+            if ($response->successful()) {
+                $result = $response->json();
 
+                // Validasi response dari API
+                if (!isset($result['prediction']) || !isset($result['confidence_score'])) {
+                    $errorMessage = 'Response dari server prediksi tidak valid. Silakan coba lagi atau hubungi administrator.';
+                    Log::warning('Invalid API response structure', [
+                        'mahasiswa_id' => $id,
+                        'user_id' => $user->id_user,
+                        'response' => $result
+                    ]);
 
-            // Simpan ke database untuk semua role
-            Prediksi::create([
-                'id_mahasiswa'      => $mahasiswa->id_mahasiswa,
-                'id_user'           => $user->id_user,
-                'tanggal_prediksi'  => now(),
-                'hasil_prediksi'    => $result['prediction'],
-                'confidence_score'  => $result['confidence_score'],
+                    if ($request->ajax() || $request->wantsJson()) {
+                        return response()->json(['success' => false, 'message' => $errorMessage], 500);
+                    }
+                    return redirect()->route('prediksi.show', $id)->with('error', $errorMessage);
+                }
+
+                // Simpan ke database untuk semua role
+                Prediksi::create([
+                    'id_mahasiswa'      => $mahasiswa->id_mahasiswa,
+                    'id_user'           => $user->id_user,
+                    'tanggal_prediksi'  => now(),
+                    'hasil_prediksi'    => $result['prediction'],
+                    'confidence_score'  => $result['confidence_score'],
+                ]);
+
+                // Ambil riwayat terbaru
+                $riwayatPrediksi = Prediksi::with('user')
+                    ->where('id_mahasiswa', $id)
+                    ->orderByDesc('tanggal_prediksi')
+                    ->take(10)
+                    ->get();
+                $riwayatHtml = View::make('prediksi.riwayatprediksi', [
+                    'riwayatPrediksi' => $riwayatPrediksi,
+                    'mahasiswa' => $mahasiswa
+                ])->render();
+
+                if ($request->ajax() || $request->wantsJson()) {
+                    return response()->json(['success' => true, 'data' => $result, 'riwayat_html' => $riwayatHtml]);
+                }
+                return redirect()->route('prediksi.show', $id)->with('hasil_prediksi', $result);
+            } else {
+                // Handle HTTP error responses
+                $errorMessage = $this->getHttpErrorMessage($response->status());
+                if ($request->ajax() || $request->wantsJson()) {
+                    return response()->json(['success' => false, 'message' => $errorMessage], $response->status());
+                }
+                return redirect()->route('prediksi.show', $id)->with('error', $errorMessage);
+            }
+        } catch (ConnectionException $e) {
+            // Handle connection errors (no internet, DNS issues, etc.)
+            Log::warning('Prediksi connection error: ' . $e->getMessage(), [
+                'mahasiswa_id' => $id,
+                'user_id' => $user->id_user,
+                'api_url' => $apiUrl
             ]);
 
-            // Ambil riwayat terbaru
-            $riwayatPrediksi = Prediksi::with('user')
-                ->where('id_mahasiswa', $id)
-                ->orderByDesc('tanggal_prediksi')
-                ->take(10)
-                ->get();
-            $riwayatHtml = View::make('prediksi.riwayatprediksi', [
-                'riwayatPrediksi' => $riwayatPrediksi,
-                'mahasiswa' => $mahasiswa
-            ])->render();
+            $errorMessage = 'Tidak dapat terhubung ke server prediksi. Silakan periksa koneksi internet Anda dan coba lagi.';
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => $errorMessage], 503);
+            }
+            return redirect()->route('prediksi.show', $id)->with('error', $errorMessage);
+        } catch (RequestException $e) {
+            // Handle request exceptions (timeout, SSL issues, etc.)
+            Log::warning('Prediksi request error: ' . $e->getMessage(), [
+                'mahasiswa_id' => $id,
+                'user_id' => $user->id_user,
+                'api_url' => $apiUrl
+            ]);
 
+            $errorMessage = 'Gagal mengirim permintaan ke server prediksi. Silakan coba lagi dalam beberapa saat.';
             if ($request->ajax() || $request->wantsJson()) {
-                return response()->json(['success' => true, 'data' => $result, 'riwayat_html' => $riwayatHtml]);
+                return response()->json(['success' => false, 'message' => $errorMessage], 503);
             }
-            return redirect()->route('prediksi.show', $id)->with('hasil_prediksi', $result);
-        } else {
+            return redirect()->route('prediksi.show', $id)->with('error', $errorMessage);
+        } catch (\Exception $e) {
+            // Handle any other unexpected errors
+            Log::error('Prediksi unexpected error: ' . $e->getMessage(), [
+                'mahasiswa_id' => $id,
+                'user_id' => $user->id_user,
+                'api_url' => $apiUrl,
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            $errorMessage = 'Terjadi kesalahan yang tidak terduga. Silakan coba lagi atau hubungi administrator jika masalah berlanjut.';
             if ($request->ajax() || $request->wantsJson()) {
-                return response()->json(['success' => false, 'message' => 'Gagal memproses prediksi. Silakan coba lagi.'], 500);
+                return response()->json(['success' => false, 'message' => $errorMessage], 500);
             }
-            return redirect()->route('prediksi.show', $id)->with('error', 'Gagal memproses prediksi. Silakan coba lagi.');
+            return redirect()->route('prediksi.show', $id)->with('error', $errorMessage);
+        }
+    }
+
+    /**
+     * Get user-friendly error message based on HTTP status code
+     */
+    private function getHttpErrorMessage($statusCode)
+    {
+        switch ($statusCode) {
+            case 400:
+                return 'Data yang dikirim tidak valid. Silakan periksa kembali data riwayat akademik mahasiswa.';
+            case 401:
+                return 'Akses ditolak. Silakan login kembali untuk melanjutkan.';
+            case 403:
+                return 'Anda tidak memiliki izin untuk melakukan prediksi. Silakan hubungi administrator.';
+            case 404:
+                return 'Layanan prediksi tidak ditemukan. Silakan hubungi administrator untuk bantuan.';
+            case 422:
+                return 'Data yang dikirim tidak sesuai format yang diharapkan. Silakan periksa kembali data riwayat akademik.';
+            case 429:
+                return 'Terlalu banyak permintaan prediksi. Silakan tunggu beberapa saat sebelum mencoba lagi.';
+            case 500:
+                return 'Server prediksi sedang mengalami gangguan. Silakan coba lagi dalam beberapa saat atau hubungi administrator.';
+            case 502:
+                return 'Server prediksi sedang tidak tersedia. Silakan coba lagi nanti atau hubungi administrator.';
+            case 503:
+                return 'Layanan prediksi sedang dalam pemeliharaan. Silakan coba lagi dalam beberapa saat.';
+            case 504:
+                return 'Server prediksi tidak merespons. Silakan coba lagi dalam beberapa saat atau hubungi administrator.';
+            default:
+                return 'Gagal memproses prediksi. Silakan coba lagi atau hubungi administrator jika masalah berlanjut.';
         }
     }
 

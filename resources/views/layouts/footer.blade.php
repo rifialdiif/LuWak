@@ -7,7 +7,8 @@
                 <span>
                     <script>
                         document.write(new Date().getFullYear())
-                    </script> &copy; DeLuSi - PEI by <a href="#">Voldi</a>
+                    </script> &copy; DeLuSi - PEI by <a
+                        href="https://www.linkedin.com/in/rifialdi-faturrochman/">Voldi</a>
                 </span>
             </div>
             <div class="col-md-6">

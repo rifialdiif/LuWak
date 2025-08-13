@@ -29,13 +29,15 @@
                         <div class="d-flex justify-content-center mb-3">
                             @php
                                 $warnaLingkaran = '#e6f0ff';
+                                $warnaText = '#2563eb';
                                 if ($prediksiTerakhir && $prediksiTerakhir->hasil_prediksi == 1) {
-                                    $warnaLingkaran = '#fff';
+                                    $warnaLingkaran = '#fef2f2';
+                                    $warnaText = '#dc2626';
                                 }
                             @endphp
                             <div
                                 style="background:{{ $warnaLingkaran }};border-radius:50%;width:170px;height:170px;display:flex;align-items:center;justify-content:center;">
-                                <span style="font-size:2.8rem;font-weight:700;color:#2563eb;">
+                                <span style="font-size:2.8rem;font-weight:700;color:{{ $warnaText }};">
                                     {{ $prediksiTerakhir ? round($prediksiTerakhir->confidence_score * 100) : '-' }}%
                                 </span>
                             </div>
